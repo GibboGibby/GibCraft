@@ -16,6 +16,9 @@ private:
 	bool* keys = new bool[348];
 	bool* prevKeys = new bool[348];
 
+	bool* mouseButtons = new bool[8];
+	bool* prevMouseButtons = new bool[8];
+
 public:
 
 	static Vec2 mousePosition;
@@ -30,10 +33,15 @@ public:
 	static bool GetKey(int key);
 	static bool GetKeyUp(int key);
 
+	static bool GetMouseButtonDown(int button);
+	static bool GetMouseButton(int button);
+	static bool GetMouseButtonUp(int button);
+
 	//static Vec2 MousePosition();
 
 	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
+	static void MouseButtonCallback(GLFWwindow*, int button, int action, int mods);
 	void UpdatePrevInput();
 	void UpdateMouse(GLFWwindow* window);
 

@@ -25,6 +25,8 @@ Input::Input()
 {
 	memset(keys, 0, 348);
 	memset(prevKeys, 0, 348);
+	memset(mouseButtons, 0, 8);
+	memset(prevMouseButtons, 0, 8);
 }
 
 Input::~Input()
@@ -49,6 +51,22 @@ bool Input::GetKeyUp(int key)
 	return !instance->keys[key] && instance->prevKeys[key];
 }
 
+
+bool Input::GetMouseButtonDown(int button)
+{
+	return instance->mouseButtons[button] && !instance->prevMouseButtons[button];
+}
+
+bool Input::GetMouseButton(int button)
+{
+	return instance->mouseButtons[button];
+}
+
+bool Input::GetMouseButtonUp(int button)
+{
+	return !instance->mouseButtons[button] && instance->prevMouseButtons[button];
+}
+
 /*
 Vec2 Input::MousePosition()
 {
@@ -63,9 +81,15 @@ void Input::KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
 	instance->keys[key] = (action == GLFW_RELEASE) ? false : true;
 }
 
+void Input::MouseButtonCallback(GLFWwindow*, int button, int action, int mods)
+{
+	instance->mouseButtons[button] = (action == GLFW_RELEASE) ? false : true;
+}
+
 void Input::UpdatePrevInput()
 {
 	memcpy(prevKeys, keys, 348);
+	memcpy(prevMouseButtons, mouseButtons, 8);
 }
 
 void Input::UpdateMouse(GLFWwindow* window)

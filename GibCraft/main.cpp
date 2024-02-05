@@ -36,6 +36,7 @@ int main()
 	// Define Input
 	Input* inputMan = Input::Instance();
 	glfwSetKeyCallback(window.GetWindow(), inputMan->KeyCallback);
+	glfwSetMouseButtonCallback(window.GetWindow(), inputMan->MouseButtonCallback);
 	//Game loop (techincally)
 	bool fullscreen = false;
 	while (!glfwWindowShouldClose(window.GetWindow()))
@@ -51,6 +52,15 @@ int main()
 		{
 			window.Close();
 			return -1;
+		}
+
+		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
+		{
+			std::cout << "Left mouse button down" << std::endl;
+		}
+		if (Input::GetMouseButtonUp(GLFW_MOUSE_BUTTON_RIGHT))
+		{
+			std::cout << "Left mouse button up" << std::endl;
 		}
 
 		
