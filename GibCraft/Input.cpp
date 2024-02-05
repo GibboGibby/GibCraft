@@ -86,6 +86,11 @@ void Input::MouseButtonCallback(GLFWwindow*, int button, int action, int mods)
 	instance->mouseButtons[button] = (action == GLFW_RELEASE) ? false : true;
 }
 
+void Input::ScrollCallback(GLFWwindow*, double xOffset, double yOffset)
+{
+	instance->mouseDelta = { static_cast<float>(xOffset), static_cast<float>(yOffset) };
+}
+
 void Input::UpdatePrevInput()
 {
 	memcpy(prevKeys, keys, 348);
@@ -97,4 +102,10 @@ void Input::UpdateMouse(GLFWwindow* window)
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
 	Input::mousePosition = { static_cast<float>(xpos), static_cast<float>(ypos) };
+	mouseDelta = { 0,0 };
+}
+
+Vec2 Input::MouseScrollDelta()
+{
+	return instance->mouseDelta;
 }

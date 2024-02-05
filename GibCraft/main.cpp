@@ -37,6 +37,7 @@ int main()
 	Input* inputMan = Input::Instance();
 	glfwSetKeyCallback(window.GetWindow(), inputMan->KeyCallback);
 	glfwSetMouseButtonCallback(window.GetWindow(), inputMan->MouseButtonCallback);
+	glfwSetScrollCallback(window.GetWindow(), inputMan->ScrollCallback);
 	//Game loop (techincally)
 	bool fullscreen = false;
 	while (!glfwWindowShouldClose(window.GetWindow()))
@@ -52,6 +53,16 @@ int main()
 		{
 			window.Close();
 			return -1;
+		}
+
+		if (Input::MouseScrollDelta().y > 0)
+		{
+			std::cout << "Mouse scrolled up" << std::endl;
+		}
+
+		if (Input::MouseScrollDelta().y < 0)
+		{
+			std::cout << "Mouse scrolled down" << std::endl;
 		}
 
 		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))

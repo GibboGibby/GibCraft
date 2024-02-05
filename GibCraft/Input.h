@@ -19,6 +19,8 @@ private:
 	bool* mouseButtons = new bool[8];
 	bool* prevMouseButtons = new bool[8];
 
+	Vec2 mouseDelta = { 0,0 };
+
 public:
 
 	static Vec2 mousePosition;
@@ -40,10 +42,14 @@ public:
 	//static Vec2 MousePosition();
 
 	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
+	//static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 	static void MouseButtonCallback(GLFWwindow*, int button, int action, int mods);
+	static void ScrollCallback(GLFWwindow*, double xOffset, double yOffset);
 	void UpdatePrevInput();
 	void UpdateMouse(GLFWwindow* window);
+
+	static Vec2 MouseScrollDelta();
+	
 
 
 };
