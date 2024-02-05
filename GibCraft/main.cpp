@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "Input.h"
 #include "Window.h"
+#include "ShaderClass.h"
 
 int main()
 {
@@ -38,6 +39,10 @@ int main()
 	glfwSetKeyCallback(window.GetWindow(), inputMan->KeyCallback);
 	glfwSetMouseButtonCallback(window.GetWindow(), inputMan->MouseButtonCallback);
 	glfwSetScrollCallback(window.GetWindow(), inputMan->ScrollCallback);
+
+	//Shader shader("default.vert", "default.frag");
+	//shader.Activate();
+
 	//Game loop (techincally)
 	bool fullscreen = false;
 	while (!glfwWindowShouldClose(window.GetWindow()))
