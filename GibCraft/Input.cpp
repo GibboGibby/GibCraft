@@ -3,7 +3,7 @@
 
 Input* Input::instance = NULL;
 
-Vec2 Input::mousePosition = { 0,0 };
+glm::vec2 Input::mousePosition = { 0,0 };
 
 Input* Input::Instance()
 {
@@ -105,7 +105,7 @@ void Input::UpdateMouse(GLFWwindow* window)
 	mouseDelta = { 0,0 };
 }
 
-Vec2 Input::MouseScrollDelta()
+glm::vec2 Input::MouseScrollDelta()
 {
 	return instance->mouseDelta;
 }

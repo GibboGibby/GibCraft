@@ -1,18 +1,10 @@
 #pragma once
-#include <math.h>
 
-struct Vec3
-{
-public:
-	float x, y, z;
-public:
-	Vec3(float x = 0.0f, float y = 0.0f, float z = 0.0f) : x(x), y(y), z(z) {}
-};
+#include <glm/vec2.hpp> // glm::vec2
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/ext/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
+#include <glm/ext/matrix_clip_space.hpp> // glm::perspective
+#include <glm/ext/scalar_constants.hpp> // glm::pi
 
-struct Vec2
-{
-public:
-	float x, y;
-public:
-	Vec2(float x = 0.0f, float y = 0.0f) : x(x), y(y) {}
-};

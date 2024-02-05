@@ -19,11 +19,11 @@ private:
 	bool* mouseButtons = new bool[8];
 	bool* prevMouseButtons = new bool[8];
 
-	Vec2 mouseDelta = { 0,0 };
+	glm::vec2 mouseDelta = { 0,0 };
 
 public:
 
-	static Vec2 mousePosition;
+	static glm::vec2 mousePosition;
 
 	Input();
 	~Input();
@@ -48,7 +48,7 @@ public:
 	void UpdatePrevInput();
 	void UpdateMouse(GLFWwindow* window);
 
-	static Vec2 MouseScrollDelta();
+	static glm::vec2 MouseScrollDelta();
 	
 
 
