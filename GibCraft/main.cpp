@@ -5,6 +5,9 @@
 #include "Input.h"
 #include "Window.h"
 #include "ShaderClass.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
 
 int main()
 {
@@ -40,8 +43,55 @@ int main()
 	glfwSetMouseButtonCallback(window.GetWindow(), inputMan->MouseButtonCallback);
 	glfwSetScrollCallback(window.GetWindow(), inputMan->ScrollCallback);
 
-	//Shader shader("default.vert", "default.frag");
-	//shader.Activate();
+	GLfloat vertices[]
+	{
+		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,	 0.8f, 0.3f, 0.02f, 1.0f, // Lower left
+		 0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,	 0.8f,0.3f, 0.02f, 1.0f, // Lower right
+		 0.0f,  0.5f * float(sqrt(3)) * 2 / 3, 0.0f, 1.0f,0.6f,0.32f, 1.0f, // Up
+		-0.25f, 0.5f * float(sqrt(3)) / 6, 0.0f,	 0.9f, 0.45f, 0.17f, 1.0f,// Inner left
+		 0.25f, 0.5f * float(sqrt(3)) / 6, 0.0f,	 0.9f, 0.45f, 0.17f, 1.0f,// Inner right
+		 0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f, 	 0.8f, 0.3f, 0.02f, 1.0f// Inner down
+	};
+
+	GLuint indices[] = {
+		0,3,5,
+		3,2,4,
+		5,4,1
+	};
+
+	GLfloat squareVerts[]
+	{
+		0.5f, 0.5f, 0.0f,		0.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, 0.0f,		1.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f,-0.5f,0.0f,		0.0f,1.0f,0.0f,1.0f,
+		-0.5f,0.5f,0.0f,		1.0f,0.0f,1.0f,1.0f
+	};
+	GLuint squareIndices[]
+	{
+		0,1,2,
+		3, 0, 2
+
+	};
+
+	
+	Shader shaderProgram("default.vert", "default.frag");
+	VAO VAO1;
+	VAO1.Bind();
+
+	//VBO VBO1(vertices, sizeof(vertices));
+	//EBO EBO1(indices, sizeof(indices));
+
+	
+	VBO VBO1(squareVerts, sizeof(squareVerts));
+	EBO EBO1(squareIndices, sizeof(squareIndices));
+	
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 7 * sizeof(float), (void*)0);
+	VAO1.LinkAttrib(VBO1, 1, 4, GL_FLOAT, 7 * sizeof(float), (void*)(4 * sizeof(float)));
+
+	VAO1.Unbind();
+	VBO1.Unbind();
+	EBO1.Unbind();
+
 
 	//Game loop (techincally)
 	bool fullscreen = false;
@@ -84,6 +134,10 @@ int main()
 		glClearColor(250.0f / 255.0f, 119.0f / 255.0f, 110.0f / 255.0f, 1.0f);
 		// Clears the screen using the set colour
 		glClear(GL_COLOR_BUFFER_BIT);
+		shaderProgram.Activate();
+		VAO1.Bind();
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done
 		glfwSwapBuffers(window.GetWindow());
 
@@ -93,6 +147,12 @@ int main()
 		glfwPollEvents();
 	}
 
+	VAO1.Delete();
+	VBO1.Delete();
+	EBO1.Delete();
+	shaderProgram.Delete();
+
 	Input::Release();
+	glfwDestroyWindow(window.GetWindow());
 	glfwTerminate();
 }
