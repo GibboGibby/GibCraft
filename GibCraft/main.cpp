@@ -72,8 +72,8 @@ int main()
 		Vertex{{0.0f, 0.8f, 0.0f}, {1.0f,0.0f,1.0f,1.0f}}, // Top
 		Vertex{{-0.3f, -0.8f, 0.0f}, {1.0f,1.0f,1.0f,1.0f}}, // BotLeft
 		Vertex{{0.3f, -0.8f, 0.0f}, {0.0f,0.0f,0.0f,1.0f}}, // BotRight
-		Vertex{{-0.5f, 0.3f, 0.0f}, {0.0f,1.0f,0.0f,1.0f}}, // TopLeft
-		Vertex{{0.5f, 0.3f, 0.0f}, {1.0f,0.0f,0.0f,1.0f}}, // TopRight
+		Vertex{{-0.6f, 0.3f, 0.0f}, {0.0f,1.0f,0.0f,1.0f}}, // TopLeft
+		Vertex{{0.6f, 0.3f, 0.0f}, {1.0f,0.0f,0.0f,1.0f}}, // TopRight
 		Vertex{{0.0f, -0.3f, 0.0f}, {0.0f,0.0f,1.0f,1.0f}}, // Mid
 
 	};
