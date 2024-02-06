@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iostream>
 #include <cerrno>
+#include "GibMaths.h"
 
 std::string GetFileContents(const char* filename);
 
@@ -19,6 +20,10 @@ public:
 	void Activate();
 	void Delete();
 	void CompileErrors(unsigned int shader, const char* type);
+
+	// Upload Uniforms
+	void UploadFloat4(GLint location, float x, float y, float z, float w);
+	void UploadMat4(GLint location, glm::mat4 matrix);
 };
 
 #endif

@@ -81,3 +81,13 @@ void Shader::CompileErrors(unsigned int shader, const char* type)
 		}
 	}
 }
+
+void Shader::UploadFloat4(GLint location, float x, float y, float z, float w)
+{
+	glUniform4f(location, x, y, z, w);
+}
+
+void Shader::UploadMat4(GLint location, glm::mat4 matrix)
+{
+	//glUniformMatrix4
+}
