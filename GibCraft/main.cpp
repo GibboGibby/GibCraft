@@ -67,6 +67,24 @@ int main()
 		-0.5f,0.5f,0.0f,		1.0f,0.0f,1.0f,1.0f
 	};
 
+	std::array<Vertex, 6> starVertices = {
+
+		Vertex{{0.0f, 0.8f, 0.0f}, {1.0f,0.0f,1.0f,1.0f}}, // Top
+		Vertex{{-0.3f, -0.8f, 0.0f}, {1.0f,1.0f,1.0f,1.0f}}, // BotLeft
+		Vertex{{0.3f, -0.8f, 0.0f}, {0.0f,0.0f,0.0f,1.0f}}, // BotRight
+		Vertex{{-0.5f, 0.3f, 0.0f}, {0.0f,1.0f,0.0f,1.0f}}, // TopLeft
+		Vertex{{0.5f, 0.3f, 0.0f}, {1.0f,0.0f,0.0f,1.0f}}, // TopRight
+		Vertex{{0.0f, -0.3f, 0.0f}, {0.0f,0.0f,1.0f,1.0f}}, // Mid
+
+	};
+
+	GLuint starIndices[] =
+	{
+		0, 1, 5, 
+		0, 2, 5, 
+		3, 4, 5, 
+	};
+
 	std::array<Vertex, 4> squareVertex = {
 		Vertex{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
 		Vertex{{0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
@@ -95,7 +113,7 @@ int main()
 
 	
 	VBO VBO1(squareVertex.data(), sizeof(squareVertex));
-	EBO EBO1(squareHollowIndices, sizeof(squareHollowIndices));
+	EBO EBO1(squareIndices, sizeof(squareIndices));
 	
 	//VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 7 * sizeof(float), (void*)0);
 	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
@@ -149,7 +167,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		shaderProgram.Activate();
 		VAO1.Bind();
-		glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 16, GL_UNSIGNED_INT, 0);
 
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done
 		glfwSwapBuffers(window.GetWindow());
