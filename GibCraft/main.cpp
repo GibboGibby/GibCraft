@@ -66,6 +66,13 @@ int main()
 		-0.5f,-0.5f,0.0f,		0.0f,1.0f,0.0f,1.0f,
 		-0.5f,0.5f,0.0f,		1.0f,0.0f,1.0f,1.0f
 	};
+
+	std::array<Vertex, 4> squareVertex = {
+		Vertex{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+		Vertex{{0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+		Vertex{{-0.5f,-0.5f,0.0f}, {0.0f,1.0f,0.0f,1.0f}},
+		Vertex{{-0.5f,0.5f,0.0f}, {1.0f,0.0f,1.0f,1.0f}}
+	};
 	GLuint squareIndices[]
 	{
 		0,1,2,
@@ -82,11 +89,12 @@ int main()
 	//EBO EBO1(indices, sizeof(indices));
 
 	
-	VBO VBO1(squareVerts, sizeof(squareVerts));
+	VBO VBO1(squareVertex.data(), sizeof(squareVerts));
 	EBO EBO1(squareIndices, sizeof(squareIndices));
 	
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 7 * sizeof(float), (void*)0);
-	VAO1.LinkAttrib(VBO1, 1, 4, GL_FLOAT, 7 * sizeof(float), (void*)(4 * sizeof(float)));
+	//VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 7 * sizeof(float), (void*)0);
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
+	VAO1.LinkAttrib(VBO1, 1, 4, GL_FLOAT, 7 * sizeof(float), (void*)offsetof(Vertex, colour));
 
 	VAO1.Unbind();
 	VBO1.Unbind();
@@ -120,11 +128,11 @@ int main()
 			std::cout << "Mouse scrolled down" << std::endl;
 		}
 
-		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
+		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 		{
 			std::cout << "Left mouse button down" << std::endl;
 		}
-		if (Input::GetMouseButtonUp(GLFW_MOUSE_BUTTON_RIGHT))
+		if (Input::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 		{
 			std::cout << "Left mouse button up" << std::endl;
 		}
@@ -141,6 +149,7 @@ int main()
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done
 		glfwSwapBuffers(window.GetWindow());
 
+		window.UpdateViewport();
 		// Gets all the events from GLFW
 		inputMan->UpdatePrevInput();
 		inputMan->UpdateMouse(window.GetWindow());
