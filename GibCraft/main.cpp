@@ -80,6 +80,11 @@ int main()
 
 	};
 
+	GLuint squareHollowIndices[]
+	{
+		0,1, 1, 2, 2, 3, 3, 0
+	};
+
 	
 	Shader shaderProgram("default.vert", "default.frag");
 	VAO VAO1;
@@ -89,8 +94,8 @@ int main()
 	//EBO EBO1(indices, sizeof(indices));
 
 	
-	VBO VBO1(squareVertex.data(), sizeof(squareVerts));
-	EBO EBO1(squareIndices, sizeof(squareIndices));
+	VBO VBO1(squareVertex.data(), sizeof(squareVertex));
+	EBO EBO1(squareHollowIndices, sizeof(squareHollowIndices));
 	
 	//VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 7 * sizeof(float), (void*)0);
 	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
@@ -130,7 +135,7 @@ int main()
 
 		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 		{
-			std::cout << "Left mouse button down" << std::endl;
+			std::cout << "Left mouse button down" << std::endl; 
 		}
 		if (Input::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 		{
@@ -144,7 +149,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 		shaderProgram.Activate();
 		VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, 0);
 
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done
 		glfwSwapBuffers(window.GetWindow());
