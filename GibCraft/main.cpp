@@ -120,11 +120,13 @@ int main()
 	};
 
 	GLuint cubeIndicesReversed[]{
+		0,3,1,
+		2,3,1,
 		5,4,1,
 		0,1,4,
 		7,3,4,
-		0,3,4,
-		0,3,1
+		0,3,4
+		
 	};
 
 	GLuint squareHollowIndices[]
@@ -276,7 +278,7 @@ int main()
 
 
 
-		glDrawElements(GL_TRIANGLES, 16, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
 
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done
 		glfwSwapBuffers(window.GetWindow());
