@@ -282,9 +282,12 @@ int main()
 		GLint projectionLoc = glGetUniformLocation(shaderProgram.ID, "uProjection");
 		GLint viewLoc = glGetUniformLocation(shaderProgram.ID, "uView");
 
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(newTransform));
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(newViewMatrix));
+		//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(newTransform));
+		//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(newViewMatrix));
+		shaderProgram.UploadMat4("uTransform", newTransform);
+		shaderProgram.UploadMat4("uProjection", projection);
+		shaderProgram.UploadMat4("uView", newViewMatrix);
 
 
 
