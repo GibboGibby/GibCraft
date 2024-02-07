@@ -239,21 +239,22 @@ int main()
 			angle += -1.0f * moveSpeed;
 		}
 
-		float fov = 90.f;
+		float fov = 45.f;
 		float near = 0.01f;
 		float far = 10000.0f;
 		float windowAspect = ((float)window.Width() / (float)window.Height());
 		glm::mat4 projection = glm::perspective(fov, windowAspect, near, far);
 
-		camera.pos.x = 2.0f * glm::sin(glm::pi<float>() * 2 * angle / 360);
-		camera.pos.z = 2.0f * glm::cos(glm::pi<float>() * 2 * angle / 360);
+		//camera.pos.x = 2.0f * glm::sin(glm::pi<float>() * 2 * angle / 360);
+		//camera.pos.z = 2.0f * glm::cos(glm::pi<float>() * 2 * angle / 360);
 
 
 		glm::mat4 newViewMatrix = glm::lookAt(camera.pos, center, up);
 
+		
 		glm::mat4 newTransform(1);
 		newTransform = glm::scale(newTransform, scale);
-		newTransform = glm::rotate(newTransform, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		newTransform = glm::rotate(newTransform, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
 		newTransform = glm::translate(newTransform, obj.pos);
 
 		// Set the background colour
