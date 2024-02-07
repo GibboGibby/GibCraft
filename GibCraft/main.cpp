@@ -178,6 +178,7 @@ int main()
 	EBO1.Unbind();
 
 	float angle = 0;
+	float yAngle = 0;
 	//Game loop (techincally)
 	bool fullscreen = false;
 	while (!glfwWindowShouldClose(window.GetWindow()))
@@ -243,6 +244,15 @@ int main()
 			angle += -1.0f * moveSpeed;
 		}
 
+		if (Input::GetKey(GLFW_KEY_UP))
+		{
+			yAngle += 1.0f * moveSpeed;
+		}
+		if (Input::GetKey(GLFW_KEY_DOWN))
+		{
+			yAngle += -1.0f * moveSpeed;
+		}
+
 		float fov = 45.f;
 		float near = 0.01f;
 		float far = 10000.0f;
@@ -256,9 +266,11 @@ int main()
 		glm::mat4 newViewMatrix = glm::lookAt(camera.pos, center, up);
 
 		
+
 		glm::mat4 newTransform(1);
 		newTransform = glm::scale(newTransform, scale);
 		newTransform = glm::rotate(newTransform, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+		newTransform = glm::rotate(newTransform, glm::radians(yAngle), glm::vec3(1.0f, 0.0f, 0.0f));
 		newTransform = glm::translate(newTransform, obj.pos); // Movement is in local space not global
 
 		// Set the background colour
