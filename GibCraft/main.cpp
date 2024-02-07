@@ -101,14 +101,14 @@ int main()
 
 
 	std::array<Vertex, 8> cubeVertices = {
-		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Right - 0
-		Vertex{{0.0f, 0.0f, -1.0f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Top Right - 1
-		Vertex{{-1.0f, 0.0f, -1.0f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Top Left - 2
-		Vertex{{-1.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Left - 3
-		Vertex{{0.0f, -1.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Bottom Right - 4
-		Vertex{{0.0f, -1.0f, -1.0f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Bottom Right - 5
-		Vertex{{-1.0f, -1.0f, -1.0f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Bottom Left - 6
-		Vertex{{-1.0f, -1.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Bottom Left - 7
+		Vertex{{0.5f, 0.5f, 0.5f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Right - 0
+		Vertex{{0.5f, 0.5f, -0.5f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Top Right - 1
+		Vertex{{-0.5f, 0.5f, -0.5f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Top Left - 2
+		Vertex{{-0.5f, 0.5f, 0.5f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Left - 3
+		Vertex{{0.5f, -0.5f, 0.5f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Bottom Right - 4
+		Vertex{{0.5f, -0.5f, -0.5f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Bottom Right - 5
+		Vertex{{-0.5f, -0.5f, -0.5f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Bottom Left - 6
+		Vertex{{-0.5f, -0.5f, 0.5f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Bottom Left - 7
 	};
 
 	GLuint cubeIndices[]{
