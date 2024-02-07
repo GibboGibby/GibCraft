@@ -262,10 +262,7 @@ int main()
 		//camera.pos.x = 2.0f * glm::sin(glm::pi<float>() * 2 * angle / 360);
 		//camera.pos.z = 2.0f * glm::cos(glm::pi<float>() * 2 * angle / 360);
 
-
 		glm::mat4 newViewMatrix = glm::lookAt(camera.pos, center, up);
-
-		
 
 		glm::mat4 newTransform(1);
 		newTransform = glm::scale(newTransform, scale);
