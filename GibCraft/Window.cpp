@@ -2,6 +2,8 @@
 
 void Window::Init(int width, int height, const char* name)
 {
+	_width = width;
+	_height = height;
 	window = glfwCreateWindow(width, height, name, nullptr, nullptr);
 	if (window == nullptr)
 	{
@@ -28,6 +30,8 @@ void Window::CallbackResize(GLFWwindow* window, int cx, int cy)
 
 void Window::Resize(int cx, int cy)
 {
+	//_width = cx;
+	//_height = cy;
 	updateViewport = true;
 }
 
@@ -77,4 +81,16 @@ void Window::Close()
 {
 	glfwDestroyWindow(window);
 	glfwTerminate();
+}
+
+int Window::Width()
+{
+	glfwGetWindowSize(window, &wndSize[0], &wndSize[1]);
+	return wndSize[0];
+}
+
+int Window::Height()
+{
+	glfwGetWindowSize(window, &wndSize[0], &wndSize[1]);
+	return wndSize[1];
 }

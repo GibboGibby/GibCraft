@@ -101,14 +101,21 @@ int main()
 
 
 	std::array<Vertex, 8> cubeVertices = {
-		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Right
-		Vertex{{0.0f, 0.0f, 1.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Back Top Right
-		Vertex{{-1.0f, 0.0f, 1.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Back Top Left
-		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Left
-		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}},
-		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}},
-		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}},
-		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}},
+		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Right - 0
+		Vertex{{0.0f, 0.0f, -1.0f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Top Right - 1
+		Vertex{{-1.0f, 0.0f, -1.0f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Top Left - 2
+		Vertex{{-1.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Left - 3
+		Vertex{{0.0f, -1.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Bottom Right - 4
+		Vertex{{0.0f, -1.0f, -1.0f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Bottom Right - 5
+		Vertex{{-1.0f, -1.0f, -1.0f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Bottom Left - 6
+		Vertex{{-1.0f, -1.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Bottom Left - 7
+	};
+
+	GLuint cubeIndices[]{
+		0, 3, 4,
+		7, 3, 4,
+		0, 1, 4,
+		5, 4, 1
 	};
 
 	GLuint squareHollowIndices[]
@@ -135,11 +142,7 @@ int main()
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::mat4 viewMatrix = glm::lookAt(camera.pos, center, up);
 
-	float fov = 90.f;
-	float near = 0.01f;
-	float far = 10000.0f;
-	float windowAspect = ((float)window.Width() / (float)window.Height());
-	glm::mat4 projection = glm::perspective(fov, windowAspect, near, far);
+	
 
 	
 	Shader shaderProgram("default.vert", "default.frag");
@@ -150,8 +153,10 @@ int main()
 	//EBO EBO1(indices, sizeof(indices));
 
 	
-	VBO VBO1(squareVertex.data(), sizeof(squareVertex));
-	EBO EBO1(squareIndices, sizeof(squareIndices));
+	//VBO VBO1(squareVertex.data(), sizeof(squareVertex));
+	//EBO EBO1(squareIndices, sizeof(squareIndices));
+	VBO VBO1(cubeVertices.data(), sizeof(cubeVertices));
+	EBO EBO1(cubeIndices, sizeof(cubeIndices));
 	
 	//VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 7 * sizeof(float), (void*)0);
 	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
@@ -198,15 +203,24 @@ int main()
 			std::cout << "Left mouse button up" << std::endl;
 		}
 
-		float moveSpeed = 2.0f;
+		float moveSpeed = 1.0f;
 		if (Input::GetKey(GLFW_KEY_A))
 		{
-			obj.pos += glm::vec3(-1.0f, 0.0f, 0.0f) * moveSpeed;
+			obj.pos += glm::vec3(-1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
 		}
 
 		if (Input::GetKey(GLFW_KEY_D))
 		{
-			obj.pos += glm::vec3(1.0f, 0.0f, 0.0f) * moveSpeed;
+			obj.pos += glm::vec3(1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
+		}
+
+		if (Input::GetKey(GLFW_KEY_W))
+		{
+			obj.pos += glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed / 2.0f;
+		}
+		if (Input::GetKey(GLFW_KEY_S))
+		{
+			obj.pos += glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed / 2.0f;
 		}
 
 		if (Input::GetKey(GLFW_KEY_RIGHT))
@@ -217,6 +231,12 @@ int main()
 		{
 			angle += -1.0f * moveSpeed;
 		}
+
+		float fov = 90.f;
+		float near = 0.01f;
+		float far = 10000.0f;
+		float windowAspect = ((float)window.Width() / (float)window.Height());
+		glm::mat4 projection = glm::perspective(fov, windowAspect, near, far);
 
 		camera.pos.x = 2.0f * glm::sin(glm::pi<float>() * 2 * angle / 360);
 		camera.pos.z = 2.0f * glm::cos(glm::pi<float>() * 2 * angle / 360);

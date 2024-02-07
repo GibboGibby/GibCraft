@@ -15,6 +15,9 @@ private:
 	std::array<int, 2> vpSize{ 0,0 };
 	bool updateViewport = true;
 
+	int _width;
+	int _height;
+
 	bool isFullscreen;
 
 	void Resize(int cx, int cy);
@@ -29,8 +32,8 @@ public:
 	void UpdateViewport();
 
 	void Close();
-	int Width() { return wndSize[0]; };
-	int Height() { return wndSize[1]; };
+	int Width();
+	int Height();
 };
 
 #endif // !WINDOW_CLASS_H
