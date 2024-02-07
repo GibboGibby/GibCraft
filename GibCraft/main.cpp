@@ -269,6 +269,7 @@ int main()
 		newTransform = glm::rotate(newTransform, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
 		newTransform = glm::rotate(newTransform, glm::radians(yAngle), glm::vec3(1.0f, 0.0f, 0.0f));
 		newTransform = glm::translate(newTransform, obj.pos); // Movement is in local space not global
+		// Need to update 
 
 		// Set the background colour
 		glClearColor(250.0f / 255.0f, 119.0f / 255.0f, 110.0f / 255.0f, 1.0f);
