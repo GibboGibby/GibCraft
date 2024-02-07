@@ -112,6 +112,7 @@ int main()
 	};
 
 	GLuint cubeIndices[]{
+		0,3,1,
 		0, 3, 4,
 		7, 3, 4,
 		0, 1, 4,
@@ -122,7 +123,8 @@ int main()
 		5,4,1,
 		0,1,4,
 		7,3,4,
-		0,3,4
+		0,3,4,
+		0,3,1
 	};
 
 	GLuint squareHollowIndices[]
@@ -255,7 +257,7 @@ int main()
 		glm::mat4 newTransform(1);
 		newTransform = glm::scale(newTransform, scale);
 		newTransform = glm::rotate(newTransform, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-		newTransform = glm::translate(newTransform, obj.pos);
+		newTransform = glm::translate(newTransform, obj.pos); // Movement is in local space not global
 
 		// Set the background colour
 		glClearColor(250.0f / 255.0f, 119.0f / 255.0f, 110.0f / 255.0f, 1.0f);
