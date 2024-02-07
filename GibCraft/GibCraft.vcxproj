@@ -156,6 +156,7 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="basic.vert" />
     <None Include="default.frag" />
     <None Include="default.vert" />
   </ItemGroup>

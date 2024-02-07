@@ -8,6 +8,7 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
+#include <glm/ext.hpp>
 
 int main()
 {
@@ -98,10 +99,47 @@ int main()
 
 	};
 
+
+	std::array<Vertex, 8> cubeVertices = {
+		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Right
+		Vertex{{0.0f, 0.0f, 1.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Back Top Right
+		Vertex{{-1.0f, 0.0f, 1.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Back Top Left
+		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Left
+		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}},
+		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}},
+		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}},
+		Vertex{{0.0f, 0.0f, 0.0f}, {0.0f,1.0f,0.0f, 1.0f}},
+	};
+
 	GLuint squareHollowIndices[]
 	{
 		0,1, 1, 2, 2, 3, 3, 0
 	};
+
+	struct SimpleObject
+	{
+		glm::vec3 pos;
+	};
+	glm::vec3 scale(1.0f,1.0f,1.0f);
+	float rotation = 0;
+	SimpleObject obj{glm::vec3(0.0f,0.0f,0.0f)};
+	//glm::vec3 position;
+
+	glm::mat4 transform(1);
+	transform = glm::scale(transform, scale);
+	transform = glm::rotate(transform, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+	transform = glm::translate(transform, obj.pos);
+
+	SimpleObject camera{ glm::vec3(0.0f,0.0f,5.0f) };
+	glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::mat4 viewMatrix = glm::lookAt(camera.pos, center, up);
+
+	float fov = 90.f;
+	float near = 0.01f;
+	float far = 10000.0f;
+	float windowAspect = ((float)window.Width() / (float)window.Height());
+	glm::mat4 projection = glm::perspective(fov, windowAspect, near, far);
 
 	
 	Shader shaderProgram("default.vert", "default.frag");
@@ -123,7 +161,7 @@ int main()
 	VBO1.Unbind();
 	EBO1.Unbind();
 
-
+	float angle = 0;
 	//Game loop (techincally)
 	bool fullscreen = false;
 	while (!glfwWindowShouldClose(window.GetWindow()))
@@ -160,13 +198,54 @@ int main()
 			std::cout << "Left mouse button up" << std::endl;
 		}
 
-		
+		float moveSpeed = 2.0f;
+		if (Input::GetKey(GLFW_KEY_A))
+		{
+			obj.pos += glm::vec3(-1.0f, 0.0f, 0.0f) * moveSpeed;
+		}
+
+		if (Input::GetKey(GLFW_KEY_D))
+		{
+			obj.pos += glm::vec3(1.0f, 0.0f, 0.0f) * moveSpeed;
+		}
+
+		if (Input::GetKey(GLFW_KEY_RIGHT))
+		{
+			angle += 1.0f * moveSpeed;
+		}
+		if (Input::GetKey(GLFW_KEY_LEFT))
+		{
+			angle += -1.0f * moveSpeed;
+		}
+
+		camera.pos.x = 2.0f * glm::sin(glm::pi<float>() * 2 * angle / 360);
+		camera.pos.z = 2.0f * glm::cos(glm::pi<float>() * 2 * angle / 360);
+
+
+		glm::mat4 newViewMatrix = glm::lookAt(camera.pos, center, up);
+
+		glm::mat4 newTransform(1);
+		newTransform = glm::scale(newTransform, scale);
+		newTransform = glm::rotate(newTransform, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		newTransform = glm::translate(newTransform, obj.pos);
+
 		// Set the background colour
 		glClearColor(250.0f / 255.0f, 119.0f / 255.0f, 110.0f / 255.0f, 1.0f);
 		// Clears the screen using the set colour
 		glClear(GL_COLOR_BUFFER_BIT);
 		shaderProgram.Activate();
 		VAO1.Bind();
+
+		GLint transformLoc = glGetUniformLocation(shaderProgram.ID, "uTransform");
+		GLint projectionLoc = glGetUniformLocation(shaderProgram.ID, "uProjection");
+		GLint viewLoc = glGetUniformLocation(shaderProgram.ID, "uView");
+
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(newTransform));
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(newViewMatrix));
+
+
+
 		glDrawElements(GL_TRIANGLES, 16, GL_UNSIGNED_INT, 0);
 
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done

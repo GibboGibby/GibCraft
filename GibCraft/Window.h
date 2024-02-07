@@ -18,7 +18,6 @@ private:
 	bool isFullscreen;
 
 	void Resize(int cx, int cy);
-
 public:
 	void Init(int width, int height, const char* name);
 	static void CallbackResize(GLFWwindow* windwow, int cx, int cy);
@@ -30,6 +29,8 @@ public:
 	void UpdateViewport();
 
 	void Close();
+	int Width() { return wndSize[0]; };
+	int Height() { return wndSize[1]; };
 };
 
 #endif // !WINDOW_CLASS_H
