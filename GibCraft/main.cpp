@@ -118,6 +118,13 @@ int main()
 		5, 4, 1
 	};
 
+	GLuint cubeIndicesReversed[]{
+		5,4,1,
+		0,1,4,
+		7,3,4,
+		0,3,4
+	};
+
 	GLuint squareHollowIndices[]
 	{
 		0,1, 1, 2, 2, 3, 3, 0
@@ -156,7 +163,7 @@ int main()
 	//VBO VBO1(squareVertex.data(), sizeof(squareVertex));
 	//EBO EBO1(squareIndices, sizeof(squareIndices));
 	VBO VBO1(cubeVertices.data(), sizeof(cubeVertices));
-	EBO EBO1(cubeIndices, sizeof(cubeIndices));
+	EBO EBO1(cubeIndicesReversed, sizeof(cubeIndicesReversed));
 	
 	//VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 7 * sizeof(float), (void*)0);
 	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
