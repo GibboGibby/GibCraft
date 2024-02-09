@@ -69,6 +69,7 @@ void Shader::CompileErrors(unsigned int shader, const char* type)
 		{
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
 			std::cout << "Shader Compilation Error for: " << type << "\n" << std::endl;
+			std::cout << "Shader Error Info Log: \n" << infoLog << std::endl;;
 		}
 	}
 	else

@@ -9,8 +9,10 @@
 #include <glm/ext/scalar_constants.hpp> // glm::pi
 #include <array>
 
+/*
 struct Vertex
 {
 	std::array<float, 3> position;
 	std::array<float, 4> colour;
 };
+*/

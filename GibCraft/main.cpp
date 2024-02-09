@@ -9,9 +9,11 @@
 #include "VBO.h"
 #include "EBO.h"
 #include <glm/ext.hpp>
+#include "Cube.h"
 
 int main()
 {
+
 	// Checks to see if glfw can initialize
 	if (!glfwInit())
 	{
@@ -67,7 +69,7 @@ int main()
 		-0.5f,-0.5f,0.0f,		0.0f,1.0f,0.0f,1.0f,
 		-0.5f,0.5f,0.0f,		1.0f,0.0f,1.0f,1.0f
 	};
-
+	/*
 	std::array<Vertex, 6> starVertices = {
 
 		Vertex{{0.0f, 0.8f, 0.0f}, {1.0f,0.0f,1.0f,1.0f}}, // Top
@@ -78,6 +80,7 @@ int main()
 		Vertex{{0.0f, -0.3f, 0.0f}, {0.0f,0.0f,1.0f,1.0f}}, // Mid
 
 	};
+	*/
 
 	GLuint starIndices[] =
 	{
@@ -86,12 +89,14 @@ int main()
 		3, 4, 5, 
 	};
 
+	/*
 	std::array<Vertex, 4> squareVertex = {
 		Vertex{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
 		Vertex{{0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
 		Vertex{{-0.5f,-0.5f,0.0f}, {0.0f,1.0f,0.0f,1.0f}},
 		Vertex{{-0.5f,0.5f,0.0f}, {1.0f,0.0f,1.0f,1.0f}}
 	};
+	*/
 	GLuint squareIndices[]
 	{
 		0,1,2,
@@ -99,7 +104,7 @@ int main()
 
 	};
 
-
+	/*
 	std::array<Vertex, 8> cubeVertices = {
 		Vertex{{0.5f, 0.5f, 0.5f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Top Right - 0
 		Vertex{{0.5f, 0.5f, -0.5f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Top Right - 1
@@ -110,6 +115,7 @@ int main()
 		Vertex{{-0.5f, -0.5f, -0.5f}, {1.0f,0.0f,0.0f, 1.0f}}, // Back Bottom Left - 6
 		Vertex{{-0.5f, -0.5f, 0.5f}, {0.0f,1.0f,0.0f, 1.0f}}, // Front Bottom Left - 7
 	};
+	*/
 
 	GLuint cubeIndices[]{
 		0,3,1,
@@ -166,16 +172,20 @@ int main()
 	
 	//VBO VBO1(squareVertex.data(), sizeof(squareVertex));
 	//EBO EBO1(squareIndices, sizeof(squareIndices));
-	VBO VBO1(cubeVertices.data(), sizeof(cubeVertices));
-	EBO EBO1(cubeIndicesReversed, sizeof(cubeIndicesReversed));
+	// 
+	//VBO VBO1(cubeVertices.data(), sizeof(cubeVertices));
+	//EBO EBO1(cubeIndicesReversed, sizeof(cubeIndicesReversed));
 	
 	//VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 7 * sizeof(float), (void*)0);
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
-	VAO1.LinkAttrib(VBO1, 1, 4, GL_FLOAT, 7 * sizeof(float), (void*)offsetof(Vertex, colour));
+	//VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
+	//VAO1.LinkAttrib(VBO1, 1, 4, GL_FLOAT, 7 * sizeof(float), (void*)offsetof(Vertex, colour));
 
 	VAO1.Unbind();
-	VBO1.Unbind();
-	EBO1.Unbind();
+	//VBO1.Unbind();
+	//EBO1.Unbind();
+
+	Cube cube;
+	glm::vec3 cubePos = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	float angle = 0;
 	float yAngle = 0;
@@ -218,21 +228,27 @@ int main()
 		float moveSpeed = 1.0f;
 		if (Input::GetKey(GLFW_KEY_A))
 		{
-			obj.pos += glm::vec3(-1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
+			//obj.pos += glm::vec3(-1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
+			cubePos += glm::vec3(-1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
+
 		}
 
 		if (Input::GetKey(GLFW_KEY_D))
 		{
-			obj.pos += glm::vec3(1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
+			//obj.pos += glm::vec3(1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
+			cubePos += glm::vec3(1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
+
 		}
 
 		if (Input::GetKey(GLFW_KEY_W))
 		{
-			obj.pos += glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed / 2.0f;
+			//obj.pos += glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed / 2.0f;
+			cubePos += glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed / 2.0f;
 		}
 		if (Input::GetKey(GLFW_KEY_S))
 		{
-			obj.pos += glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed / 2.0f;
+			//obj.pos += glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed / 2.0f;
+			cubePos += glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed / 2.0f;
 		}
 
 		if (Input::GetKey(GLFW_KEY_RIGHT))
@@ -276,22 +292,26 @@ int main()
 		// Clears the screen using the set colour
 		glClear(GL_COLOR_BUFFER_BIT);
 		shaderProgram.Activate();
-		VAO1.Bind();
+		//VAO1.Bind();
 
 		GLint transformLoc = glGetUniformLocation(shaderProgram.ID, "uTransform");
 		GLint projectionLoc = glGetUniformLocation(shaderProgram.ID, "uProjection");
 		GLint viewLoc = glGetUniformLocation(shaderProgram.ID, "uView");
 
+		shaderProgram.UploadMat4("uProjection", projection);
+		shaderProgram.UploadMat4("uView", newViewMatrix);
+		cube.DrawCube(cubePos, shaderProgram);
+
 		//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(newTransform));
 		//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(newViewMatrix));
-		shaderProgram.UploadMat4("uTransform", newTransform);
-		shaderProgram.UploadMat4("uProjection", projection);
-		shaderProgram.UploadMat4("uView", newViewMatrix);
+	
+		//shaderProgram.UploadMat4("uTransform", newTransform);
+		
+		
 
 
-
-		glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
 
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done
 		glfwSwapBuffers(window.GetWindow());
@@ -304,8 +324,8 @@ int main()
 	}
 
 	VAO1.Delete();
-	VBO1.Delete();
-	EBO1.Delete();
+	//VBO1.Delete();
+	//EBO1.Delete();
 	shaderProgram.Delete();
 
 	Input::Release();
