@@ -163,6 +163,7 @@
     <None Include="basic.vert" />
     <None Include="default.frag" />
     <None Include="default.vert" />
+    <None Include="fmb.vert" />
     <None Include="sinewave.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

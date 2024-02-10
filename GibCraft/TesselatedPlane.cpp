@@ -52,19 +52,23 @@ TesselatedPlane::TesselatedPlane(int startSize, int pointsPerMetre)
 			Vertex v1;
 			v1.position = glm::vec3(x, 0.0f, y) + (vertexPoints[0] * pointIncrease);
 			//v1.texCoords = glm::vec3(v1.position.x, v1.position.z, v1.position.y);
-			v1.texCoords = glm::vec2(v1.position.x, v1.position.z);
+			// Test this with static normals
+			v1.texCoords = glm::vec2(v1.position.x / startSize, v1.position.z / startSize);
 
 			Vertex v2;
 			v2.position = glm::vec3(x, 0.0f, y) + (vertexPoints[1] * pointIncrease);
-			v2.texCoords = glm::vec2(v2.position.x, v2.position.z);
+			v2.texCoords = glm::vec2(v2.position.x / startSize, v2.position.z / startSize);
+			
 
 			Vertex v3;
 			v3.position = glm::vec3(x, 0.0f, y) + (vertexPoints[3] * pointIncrease);
-			v3.texCoords = glm::vec2(v3.position.x, v3.position.z);
+			v3.texCoords = glm::vec2(v3.position.x / startSize, v3.position.z / startSize);
+			
 
 			Vertex v4;
 			v4.position = glm::vec3(x, 0.0f, y) + (vertexPoints[2] * pointIncrease);
-			v4.texCoords = glm::vec2(v4.position.x, v4.position.z);
+			v4.texCoords = glm::vec2(v4.position.x / startSize, v4.position.z / startSize);
+			
 
 			/*
 			std::cout << "tri 1 - " << std::endl;
@@ -97,6 +101,13 @@ TesselatedPlane::TesselatedPlane(int startSize, int pointsPerMetre)
 			square++;
 			*/
 		}
+	}
+
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		glm::vec3 pos = vertices[i].position;
+		pos.z += 1.0f;
+		vertices[i].position = pos;
 	}
 
 	glGenVertexArrays(1, &vao);

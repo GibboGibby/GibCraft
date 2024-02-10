@@ -163,7 +163,7 @@ int main()
 	
 
 	
-	Shader shaderProgram("default.vert", "default.frag");
+	Shader shaderProgram("fmb.vert", "default.frag");
 	VAO VAO1;
 	VAO1.Bind();
 
@@ -190,7 +190,7 @@ int main()
 	glm::vec3 planePos = glm::vec3(50.0f, 0.0f, 0.0f);
 
 	
-	TesselatedPlane plane(1, 20);
+	TesselatedPlane plane(3, 50);
 
 	float angle = 0;
 	float yAngle = 0;
@@ -199,9 +199,11 @@ int main()
 
 	float amplitude = 1.0f;
 	float frequency = 0.5f;
-
-	//glEnable(GL_DEPTH_TEST);
+	glClearDepth(1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_CULL_FACE);
+	//glMatrixMode(GL_PROJECTION);
 
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
@@ -237,7 +239,7 @@ int main()
 			std::cout << "Left mouse button up" << std::endl;
 		}
 
-		float moveSpeed = 1.0f;
+		float moveSpeed = 0.1f;
 		if (Input::GetKey(GLFW_KEY_A))
 		{
 			//obj.pos += glm::vec3(-1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
@@ -316,13 +318,13 @@ int main()
 		newTransform = glm::scale(newTransform, scale);
 		newTransform = glm::rotate(newTransform, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
 		newTransform = glm::rotate(newTransform, glm::radians(yAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-		newTransform = glm::translate(newTransform, obj.pos); // Movement is in local space not global
+		newTransform = glm::translate(newTransform, cubePos); // Movement is in local space not global ( I think?)
 		// Need to update 
 
 		// Set the background colour
 		glClearColor(250.0f / 255.0f, 119.0f / 255.0f, 110.0f / 255.0f, 1.0f);
 		// Clears the screen using the set colour
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shaderProgram.Activate();
 		//VAO1.Bind();
 
@@ -330,24 +332,14 @@ int main()
 		GLint projectionLoc = glGetUniformLocation(shaderProgram.ID, "uProjection");
 		GLint viewLoc = glGetUniformLocation(shaderProgram.ID, "uView");
 
+		// Uploads matrices to the shader
 		shaderProgram.UploadMat4("uProjection", projection);
 		shaderProgram.UploadMat4("uView", newViewMatrix);
-		//shaderProgram.UploadMat4("uTransform", newTransform);
+		shaderProgram.UploadMat4("uTransform", newTransform);
 		shaderProgram.UploadFloat("uFrequency", frequency);
 		shaderProgram.UploadFloat("uAmplitude", amplitude);
 		plane.DrawPlane(planePos, shaderProgram);
-		cube.DrawCube(cubePos, shaderProgram);
-
-		//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(newTransform));
-		//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(newViewMatrix));
-	
-		//shaderProgram.UploadMat4("uTransform", newTransform);
 		
-		
-
-
-		//glDrawElements(GL_TRIANGLES, 24, GL_UNSIGNED_INT, 0);
 
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done
 		glfwSwapBuffers(window.GetWindow());

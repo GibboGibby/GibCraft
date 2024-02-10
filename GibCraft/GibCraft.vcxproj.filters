@@ -94,5 +94,8 @@
     <None Include="sinewave.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="fmb.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
