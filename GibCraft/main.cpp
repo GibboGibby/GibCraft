@@ -11,6 +11,8 @@
 #include <glm/ext.hpp>
 #include "Cube.h"
 #include "TesselatedPlane.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 int main()
 {
@@ -163,7 +165,7 @@ int main()
 	
 
 	
-	Shader shaderProgram("fmb.vert", "default.frag");
+	Shader shaderProgram("default.vert", "default.frag");
 	VAO VAO1;
 	VAO1.Bind();
 
@@ -204,6 +206,40 @@ int main()
 	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_CULL_FACE);
 	//glMatrixMode(GL_PROJECTION);
+
+	int texWidth;
+	int texHeight;
+	int numChannels;
+	uint8_t* pixels = stbi_load("oak_planks.png", &texWidth, &texHeight, &numChannels, 0);
+
+	uint32_t woodenPlanksID;
+	glGenTextures(1, &woodenPlanksID);
+	glBindTexture(GL_TEXTURE_2D, woodenPlanksID);
+
+	// Texture Parameters
+	bool pixelated = true;
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+
+	uint32_t mipLevel = 0;
+	uint32_t internalFormat = GL_RGBA32F;
+	uint32_t width = texWidth;
+	uint32_t height = texHeight;
+	uint32_t border = 0;
+	uint32_t format = GL_RGB;
+	uint32_t type = GL_UNSIGNED_BYTE;
+
+	glTexImage2D(GL_TEXTURE_2D, mipLevel, internalFormat, width, height, border, format, type, pixels);
+
+	stbi_image_free(pixels);
+
+	int textureSlot = 0;
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	glBindTexture(GL_TEXTURE_2D, woodenPlanksID);
+
+	shaderProgram.UploadInt("uTexture", textureSlot);
 
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
@@ -338,6 +374,8 @@ int main()
 		shaderProgram.UploadMat4("uTransform", newTransform);
 		shaderProgram.UploadFloat("uFrequency", frequency);
 		shaderProgram.UploadFloat("uAmplitude", amplitude);
+		shaderProgram.UploadInt("uTexture", textureSlot);
+		cube.DrawCube(cubePos, shaderProgram);
 		plane.DrawPlane(planePos, shaderProgram);
 		
 
@@ -355,6 +393,7 @@ int main()
 	//VBO1.Delete();
 	//EBO1.Delete();
 	shaderProgram.Delete();
+
 
 	Input::Release();
 	glfwDestroyWindow(window.GetWindow());

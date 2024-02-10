@@ -123,6 +123,11 @@ void Shader::UploadFloat(const char* varName, float value) const
 	glUniform1f(glGetUniformLocation(ID, varName), value);
 }
 
+void Shader::UploadInt(const char* varName, int value) const
+{
+	glUniform1i(glGetUniformLocation(ID, varName), value);
+}
+
 void Shader::UploadIntArray(const char* varName, int length, const int* array) const
 {
 	//glUniform
