@@ -3,13 +3,14 @@
 
 #include <glad/glad.h>
 #include "GibMaths.h"
+#include "Cube.h"
 
 class VBO
 {
 public:
 	GLuint ID;
 	VBO(GLfloat* vertices, GLsizeiptr size);
-	//VBO(Vertex* vertices, GLsizeiptr size);
+	VBO(Vertex* vertices, GLsizeiptr size);
 
 	void Bind();
 	void Unbind();

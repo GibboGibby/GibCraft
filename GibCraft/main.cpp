@@ -10,6 +10,7 @@
 #include "EBO.h"
 #include <glm/ext.hpp>
 #include "Cube.h"
+#include "TesselatedPlane.h"
 
 int main()
 {
@@ -186,11 +187,22 @@ int main()
 
 	Cube cube;
 	glm::vec3 cubePos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 planePos = glm::vec3(50.0f, 0.0f, 0.0f);
+
+	
+	TesselatedPlane plane(1, 20);
 
 	float angle = 0;
 	float yAngle = 0;
 	//Game loop (techincally)
 	bool fullscreen = false;
+
+	float amplitude = 1.0f;
+	float frequency = 0.5f;
+
+	//glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
 
@@ -251,6 +263,26 @@ int main()
 			cubePos += glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed / 2.0f;
 		}
 
+		if (Input::GetKey(GLFW_KEY_J))
+		{
+			amplitude += -1.0f * 0.1f;
+		}
+		if (Input::GetKey(GLFW_KEY_U))
+		{
+			frequency += -1.0f * 0.1f;
+		}
+
+		if (Input::GetKey(GLFW_KEY_K))
+		{
+			amplitude += 1.0f * 0.1f;
+		}
+
+		if (Input::GetKey(GLFW_KEY_I))
+		{
+			frequency += 1.0f * 0.1f;
+		}
+
+
 		if (Input::GetKey(GLFW_KEY_RIGHT))
 		{
 			angle += 1.0f * moveSpeed;
@@ -300,6 +332,10 @@ int main()
 
 		shaderProgram.UploadMat4("uProjection", projection);
 		shaderProgram.UploadMat4("uView", newViewMatrix);
+		//shaderProgram.UploadMat4("uTransform", newTransform);
+		shaderProgram.UploadFloat("uFrequency", frequency);
+		shaderProgram.UploadFloat("uAmplitude", amplitude);
+		plane.DrawPlane(planePos, shaderProgram);
 		cube.DrawCube(cubePos, shaderProgram);
 
 		//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(newTransform));

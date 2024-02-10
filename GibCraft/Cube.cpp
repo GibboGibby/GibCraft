@@ -57,7 +57,7 @@ Cube::Cube()
 void Cube::DrawCube(const glm::vec3& pos, Shader& shader)
 {
 	glm::mat4 transform = glm::translate(pos);
-	shader.UploadMat4("uTransform", transform);
+	//shader.UploadMat4("uTransform", transform);
 
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, (GLsizei)vertices.size());

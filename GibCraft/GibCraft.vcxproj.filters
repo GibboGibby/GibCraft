@@ -48,6 +48,9 @@
     <ClCompile Include="Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TesselatedPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input.h">
@@ -74,6 +77,9 @@
     <ClInclude Include="Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TesselatedPlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -83,6 +89,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="basic.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="sinewave.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -18,6 +18,6 @@ void main()
 	float freq = 5.0;
 	float y = uAmplitude * sin(aTexCoords.x * uFrequency);
 	vec3 newPos = vec3(aPos.x, y, aPos.z);
-	gl_Position = uProjection * uView * (uTransform * vec4(aPos, 1.0));
+	gl_Position = uProjection * uView * (uTransform * vec4(newPos, 1.0));
 	texCoords = aTexCoords;
 }
