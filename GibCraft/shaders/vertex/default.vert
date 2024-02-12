@@ -4,7 +4,6 @@ layout (location = 1) in vec2 aTexCoords;
 
 
 out vec2 texCoords;
-out vec4 texCol;
 
 uniform mat4 uTransform;
 uniform mat4 uProjection;

@@ -19,82 +19,103 @@
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{aee5e13e-8739-4ea6-9fc0-6b8f9395f9bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{6354cdc9-d275-417b-97db-bff1c961be55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Input">
+      <UniqueIdentifier>{681e53b0-e691-43c6-b70e-86c8d275d5bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Input">
+      <UniqueIdentifier>{4c2b779c-bf9e-4079-b383-1b381871cbb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\ECS">
+      <UniqueIdentifier>{44f8d84c-9bc7-417b-bb82-25ca39169555}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="glad.c">
+    <ClCompile Include="Engine\glad.c">
       <Filter>Source Files\Glad</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
+    <ClCompile Include="Engine\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
+    <ClCompile Include="Engine\ShaderClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderClass.cpp">
+    <ClCompile Include="Engine\EBO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EBO.cpp">
+    <ClCompile Include="Engine\VAO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VAO.cpp">
+    <ClCompile Include="Engine\VBO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VBO.cpp">
+    <ClCompile Include="Engine\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
+    <ClCompile Include="Engine\TesselatedPlane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TesselatedPlane.cpp">
+    <ClCompile Include="Engine\Input\Input.cpp">
+      <Filter>Source Files\Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\CubeRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Input.h">
+    <ClInclude Include="Engine\GibMaths.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GibMaths.h">
+    <ClInclude Include="Engine\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
+    <ClInclude Include="Engine\ShaderClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderClass.h">
+    <ClInclude Include="Engine\EBO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EBO.h">
+    <ClInclude Include="Engine\VAO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VAO.h">
+    <ClInclude Include="Engine\VBO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VBO.h">
+    <ClInclude Include="Engine\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
+    <ClInclude Include="Engine\TesselatedPlane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TesselatedPlane.h">
+    <ClInclude Include="Engine\Input\Input.h">
+      <Filter>Header Files\Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Components\IComponent.h">
+      <Filter>Header Files\Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CubeRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="default.frag">
+    <None Include="Shaders\Fragment\default.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="default.vert">
+    <None Include="Shaders\Vertex\default.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="basic.vert">
+    <None Include="Shaders\Vertex\basic.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="sinewave.vert">
+    <None Include="Shaders\Vertex\sinewave.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="fmb.vert">
+    <None Include="Shaders\Vertex\fmb.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -1,8 +1,59 @@
 #include "Cube.h"
 
+float newVertices[] = {
+
+	// back face
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+	// front face
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+	// left
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	// right
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	 // bottom
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+	// top
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
 
 Cube::Cube()
 {
+	
 	std::array<glm::vec3, 8> cubeVertices;
 	cubeVertices[0] = glm::vec3(-0.5f, 0.5f, 0.5f);
 	cubeVertices[1] = glm::vec3(0.5f, 0.5f, 0.5f);
@@ -27,7 +78,11 @@ Cube::Cube()
 	{
 		vertices[vertexIndex].position = cubeVertices[cubeElements[vertexIndex]];
 		vertices[vertexIndex].texCoords = texCoords[vertexIndex % 6];
+	}
 
+	for (int i = 0; i < 6; i++)
+	{
+		vertices[i].textureSlot = 1;
 	}
 
 	glGenVertexArrays(1, &vao);
@@ -52,6 +107,11 @@ Cube::Cube()
 	// Set up and enable attribute 2 (OpenGL 3.3 method)
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
 	glEnableVertexAttribArray(4);
+
+	glVertexAttribPointer(5, 1, GL_INT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, textureSlot));
+	glEnableVertexAttribArray(5);
+
+
 }
 
 void Cube::DrawCube(const glm::vec3& pos, Shader& shader)
@@ -60,6 +120,9 @@ void Cube::DrawCube(const glm::vec3& pos, Shader& shader)
 	//shader.UploadMat4("uTransform", transform);
 
 	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, (GLsizei)vertices.size());
+	shader.UploadInt("uTexture", 1);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	shader.UploadInt("uTexture", 0);
+	glDrawArrays(GL_TRIANGLES, 6, (GLsizei)vertices.size()-6);
 	
 }

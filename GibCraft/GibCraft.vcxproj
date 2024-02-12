@@ -137,34 +137,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="EBO.cpp" />
-    <ClCompile Include="glad.c" />
-    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Engine\Cube.cpp" />
+    <ClCompile Include="Engine\CubeRenderer.cpp" />
+    <ClCompile Include="Engine\EBO.cpp" />
+    <ClCompile Include="Engine\glad.c" />
+    <ClCompile Include="Engine\Input\Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ShaderClass.cpp" />
-    <ClCompile Include="TesselatedPlane.cpp" />
-    <ClCompile Include="VAO.cpp" />
-    <ClCompile Include="VBO.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="Engine\ShaderClass.cpp" />
+    <ClCompile Include="Engine\TesselatedPlane.cpp" />
+    <ClCompile Include="Engine\VAO.cpp" />
+    <ClCompile Include="Engine\VBO.cpp" />
+    <ClCompile Include="Engine\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Cube.h" />
-    <ClInclude Include="EBO.h" />
-    <ClInclude Include="GibMaths.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="ShaderClass.h" />
-    <ClInclude Include="TesselatedPlane.h" />
-    <ClInclude Include="VAO.h" />
-    <ClInclude Include="VBO.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="Engine\Components\IComponent.h" />
+    <ClInclude Include="Engine\Cube.h" />
+    <ClInclude Include="Engine\CubeRenderer.h" />
+    <ClInclude Include="Engine\EBO.h" />
+    <ClInclude Include="Engine\GibMaths.h" />
+    <ClInclude Include="Engine\Input\Input.h" />
+    <ClInclude Include="Engine\ShaderClass.h" />
+    <ClInclude Include="Engine\TesselatedPlane.h" />
+    <ClInclude Include="Engine\VAO.h" />
+    <ClInclude Include="Engine\VBO.h" />
+    <ClInclude Include="Engine\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="basic.vert" />
-    <None Include="default.frag" />
-    <None Include="default.vert" />
-    <None Include="fmb.vert" />
-    <None Include="sinewave.vert" />
+    <None Include="Shaders\Vertex\basic.vert" />
+    <None Include="Shaders\Fragment\default.frag" />
+    <None Include="Shaders\Vertex\default.vert" />
+    <None Include="Shaders\Vertex\fmb.vert" />
+    <None Include="Shaders\Vertex\sinewave.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

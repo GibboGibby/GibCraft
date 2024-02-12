@@ -2,17 +2,18 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "Input.h"
-#include "Window.h"
-#include "ShaderClass.h"
-#include "VAO.h"
-#include "VBO.h"
-#include "EBO.h"
+#include "Engine/Input/Input.h"
+#include "Engine/Window.h"
+#include "Engine/ShaderClass.h"
+#include "Engine/VAO.h"
+#include "Engine/VBO.h"
+#include "Engine/EBO.h"
 #include <glm/ext.hpp>
-#include "Cube.h"
-#include "TesselatedPlane.h"
+#include "Engine/Cube.h"
+#include "Engine/TesselatedPlane.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "Engine/CubeRenderer.h"
 
 int main()
 {
@@ -165,7 +166,7 @@ int main()
 	
 
 	
-	Shader shaderProgram("default.vert", "default.frag");
+	Shader shaderProgram("shaders/vertex/default.vert", "shaders/fragment/default.frag");
 	VAO VAO1;
 	VAO1.Bind();
 
@@ -188,6 +189,7 @@ int main()
 	//EBO1.Unbind();
 
 	Cube cube;
+	CubeRenderer cubeRenderer;
 	glm::vec3 cubePos = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 planePos = glm::vec3(50.0f, 0.0f, 0.0f);
 
@@ -210,7 +212,13 @@ int main()
 	int texWidth;
 	int texHeight;
 	int numChannels;
-	uint8_t* pixels = stbi_load("oak_planks.png", &texWidth, &texHeight, &numChannels, 0);
+	int atlasWidth;
+	int atlasHeight;
+	int atlasNumChannels;
+
+	uint8_t* pixels = stbi_load("resources\\textures\\oak_planks.png", &texWidth, &texHeight, &numChannels, 0);
+	uint8_t* dirtPixels = stbi_load("resources\\textures\\dirt.png", &texWidth, &texHeight, &numChannels, 0);
+	uint8_t* textureAtlasPixels = stbi_load("resources\\textures\\atlas.png", &atlasWidth, &atlasHeight, &atlasNumChannels, 0);
 
 	uint32_t woodenPlanksID;
 	glGenTextures(1, &woodenPlanksID);
@@ -233,11 +241,47 @@ int main()
 
 	glTexImage2D(GL_TEXTURE_2D, mipLevel, internalFormat, width, height, border, format, type, pixels);
 
-	stbi_image_free(pixels);
+	
+	uint32_t dirtID;
+	glGenTextures(1, &dirtID);
+	glBindTexture(GL_TEXTURE_2D, dirtID);
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, mipLevel, internalFormat, width, height, border, format, type, dirtPixels);
+
+	uint32_t texAtlasID;
+	glGenTextures(1, &texAtlasID);
+	glBindTexture(GL_TEXTURE_2D, texAtlasID);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, mipLevel, internalFormat, atlasWidth, atlasHeight, border, format, type, textureAtlasPixels);
+
+	
+	stbi_image_free(pixels);
+	stbi_image_free(dirtPixels);
+	stbi_image_free(textureAtlasPixels);
+
+	/*
 	int textureSlot = 0;
 	glActiveTexture(GL_TEXTURE0 + textureSlot);
 	glBindTexture(GL_TEXTURE_2D, woodenPlanksID);
+
+	
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, dirtID);
+	
+	*/
+	int textureSlot = 0;
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	glBindTexture(GL_TEXTURE_2D, texAtlasID);
 
 	shaderProgram.UploadInt("uTexture", textureSlot);
 
@@ -275,7 +319,7 @@ int main()
 			std::cout << "Left mouse button up" << std::endl;
 		}
 
-		float moveSpeed = 0.1f;
+		float moveSpeed = 1.f;
 		if (Input::GetKey(GLFW_KEY_A))
 		{
 			//obj.pos += glm::vec3(-1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
@@ -375,8 +419,9 @@ int main()
 		shaderProgram.UploadFloat("uFrequency", frequency);
 		shaderProgram.UploadFloat("uAmplitude", amplitude);
 		shaderProgram.UploadInt("uTexture", textureSlot);
-		cube.DrawCube(cubePos, shaderProgram);
-		plane.DrawPlane(planePos, shaderProgram);
+		cubeRenderer.RenderCube(cubePos, 0, projection,shaderProgram, newViewMatrix);
+		//cube.DrawCube(cubePos, shaderProgram);
+		//plane.DrawPlane(planePos, shaderProgram);
 		
 
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done

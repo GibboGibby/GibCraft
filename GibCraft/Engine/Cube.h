@@ -30,6 +30,7 @@ struct Vertex
 	glm::vec3 normal;
 	glm::vec3 tangent;
 	glm::vec3 bitangent;
+	int textureSlot = 0;
 };
 
 class Cube
@@ -37,6 +38,8 @@ class Cube
 	std::array<Vertex, 36> vertices;
 	uint32_t vao;
 	uint32_t vbo;
+
+
 
 	std::array<uint32_t, 36> cubeElements = {
 		// Each set of 6 indices represents one quad

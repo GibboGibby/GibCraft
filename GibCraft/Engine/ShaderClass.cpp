@@ -3,6 +3,7 @@
 std::string GetFileContents(const char* filename)
 {
 	std::ifstream in(filename, std::ios::binary);
+	std::cout << filename << std::endl;
 	if (in)
 	{
 		std::string contents;

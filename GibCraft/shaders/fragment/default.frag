@@ -20,4 +20,5 @@ void main()
 	vec4 texColor = texture(uTexture, texCoords);
 	//FragColor = vec4(color,1.0);
 	FragColor = texColor;
+	
 }
