@@ -9,3 +9,13 @@ Gibcraft* Gibcraft::Instance()
 
 	return instance;
 }
+
+Gibcraft::Gibcraft()
+{
+
+}
+
+Gibcraft::~Gibcraft()
+{
+
+}
