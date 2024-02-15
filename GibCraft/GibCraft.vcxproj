@@ -137,11 +137,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Engine\BlockDatabase.cpp" />
+    <ClCompile Include="Engine\Chunk.cpp" />
+    <ClCompile Include="Engine\ChunkMesh.cpp" />
     <ClCompile Include="Engine\Cube.cpp" />
-    <ClCompile Include="Engine\CubeRenderer.cpp" />
     <ClCompile Include="Engine\EBO.cpp" />
+    <ClCompile Include="Engine\FPSCamera.cpp" />
     <ClCompile Include="Engine\glad.c" />
+    <ClCompile Include="Engine\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Input\Input.cpp" />
+    <ClCompile Include="Engine\Renderer.cpp" />
+    <ClCompile Include="Engine\Texture.cpp" />
+    <ClCompile Include="Engine\VertexArray.cpp" />
+    <ClCompile Include="Engine\VertexBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\ShaderClass.cpp" />
     <ClCompile Include="Engine\TesselatedPlane.cpp" />
@@ -150,21 +159,37 @@
     <ClCompile Include="Engine\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="Engine\Block.h" />
+    <ClInclude Include="Engine\BlockDatabase.h" />
+    <ClInclude Include="Engine\Chunk.h" />
+    <ClInclude Include="Engine\ChunkMesh.h" />
     <ClInclude Include="Engine\Components\IComponent.h" />
     <ClInclude Include="Engine\Cube.h" />
-    <ClInclude Include="Engine\CubeRenderer.h" />
+    <ClInclude Include="Engine\Defs.h" />
     <ClInclude Include="Engine\EBO.h" />
+    <ClInclude Include="Engine\FPSCamera.h" />
     <ClInclude Include="Engine\GibMaths.h" />
+    <ClInclude Include="Engine\IndexBuffer.h" />
     <ClInclude Include="Engine\Input\Input.h" />
+    <ClInclude Include="Engine\Renderer.h" />
     <ClInclude Include="Engine\ShaderClass.h" />
     <ClInclude Include="Engine\TesselatedPlane.h" />
+    <ClInclude Include="Engine\Texture.h" />
+    <ClInclude Include="Engine\TextureAtlas.h" />
     <ClInclude Include="Engine\VAO.h" />
     <ClInclude Include="Engine\VBO.h" />
+    <ClInclude Include="Engine\Vertex.h" />
+    <ClInclude Include="Engine\VertexArray.h" />
+    <ClInclude Include="Engine\VertexBuffer.h" />
     <ClInclude Include="Engine\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\fragment\basic.frag" />
+    <None Include="shaders\fragment\BlockRenderer.frag" />
     <None Include="Shaders\Vertex\basic.vert" />
     <None Include="Shaders\Fragment\default.frag" />
+    <None Include="shaders\vertex\BlockRenderer.vert" />
     <None Include="Shaders\Vertex\default.vert" />
     <None Include="Shaders\Vertex\fmb.vert" />
     <None Include="Shaders\Vertex\sinewave.vert" />

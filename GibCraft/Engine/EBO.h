@@ -7,7 +7,8 @@ class EBO
 {
 public:
 	GLuint ID;
-	EBO(GLuint* vertices, GLsizeiptr size);
+	EBO();
+	void BufferData(GLsizeiptr size, void* data, GLenum usage);
 
 	void Bind();
 	void Unbind();

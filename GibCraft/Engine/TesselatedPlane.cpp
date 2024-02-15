@@ -49,23 +49,23 @@ TesselatedPlane::TesselatedPlane(int startSize, int pointsPerMetre)
 	{
 		for (float y = 0.0f; y < startSize; y += pointIncrease)
 		{
-			Vertex v1;
+			BaseCubeVertex v1;
 			v1.position = glm::vec3(x, 0.0f, y) + (vertexPoints[0] * pointIncrease);
 			//v1.texCoords = glm::vec3(v1.position.x, v1.position.z, v1.position.y);
 			// Test this with static normals
 			v1.texCoords = glm::vec2(v1.position.x / startSize, v1.position.z / startSize);
 
-			Vertex v2;
+			BaseCubeVertex v2;
 			v2.position = glm::vec3(x, 0.0f, y) + (vertexPoints[1] * pointIncrease);
 			v2.texCoords = glm::vec2(v2.position.x / startSize, v2.position.z / startSize);
 			
 
-			Vertex v3;
+			BaseCubeVertex v3;
 			v3.position = glm::vec3(x, 0.0f, y) + (vertexPoints[3] * pointIncrease);
 			v3.texCoords = glm::vec2(v3.position.x / startSize, v3.position.z / startSize);
 			
 
-			Vertex v4;
+			BaseCubeVertex v4;
 			v4.position = glm::vec3(x, 0.0f, y) + (vertexPoints[2] * pointIncrease);
 			v4.texCoords = glm::vec2(v4.position.x / startSize, v4.position.z / startSize);
 			
@@ -114,23 +114,24 @@ TesselatedPlane::TesselatedPlane(int startSize, int pointsPerMetre)
 	glBindVertexArray(vao);
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(BaseCubeVertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+	
+	(0, 3, GL_FLOAT, GL_FALSE, sizeof(BaseCubeVertex), (void*)offsetof(BaseCubeVertex, position));
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(BaseCubeVertex), (void*)offsetof(BaseCubeVertex, texCoords));
 	glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(BaseCubeVertex), (void*)offsetof(BaseCubeVertex, normal));
 	glEnableVertexAttribArray(2);
 
 	// Set up and enable attribute 2 (OpenGL 3.3 method)
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(BaseCubeVertex), (void*)offsetof(BaseCubeVertex, tangent));
 	glEnableVertexAttribArray(3);
 
 	// Set up and enable attribute 2 (OpenGL 3.3 method)
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(BaseCubeVertex), (void*)offsetof(BaseCubeVertex, bitangent));
 	glEnableVertexAttribArray(4);
 
 

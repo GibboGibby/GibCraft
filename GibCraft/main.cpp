@@ -1,3 +1,4 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include <iostream>
 
 #include <glad/glad.h>
@@ -11,9 +12,10 @@
 #include <glm/ext.hpp>
 #include "Engine/Cube.h"
 #include "Engine/TesselatedPlane.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#include "Engine/CubeRenderer.h"
+
+//#include "Engine/CubeRenderer.h"
+#include "Engine/Renderer.h"
+#include "Engine/FPSCamera.h"
 
 int main()
 {
@@ -73,6 +75,22 @@ int main()
 		-0.5f,-0.5f,0.0f,		0.0f,1.0f,0.0f,1.0f,
 		-0.5f,0.5f,0.0f,		1.0f,0.0f,1.0f,1.0f
 	};
+
+	struct NewVertex
+	{
+		glm::vec3 pos;
+		glm::vec4 color;
+	};
+
+	NewVertex newVertexesSquare[]
+	{
+		{{0.5f,0.5f,0.0f},{0.0f,0.0f,1.0f,1.0f}},
+		{{0.5f,-0.5f,0.0f},{1.0f,0.0f,0.0f,1.0f}},
+		{{-0.5f,-0.5f,0.0f}, {0.0f,1.0f,0.0f,1.0f}},
+		{{-0.5f,0.5f,0.0f},{1.0f,0.0f,1.0f,1.0f}}
+	};
+
+
 	/*
 	std::array<Vertex, 6> starVertices = {
 
@@ -158,38 +176,34 @@ int main()
 	transform = glm::rotate(transform, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 	transform = glm::translate(transform, obj.pos);
 
-	SimpleObject camera{ glm::vec3(0.0f,0.0f,5.0f) };
+	SimpleObject oldcamera{ glm::vec3(0.0f,0.0f,5.0f) };
 	glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::mat4 viewMatrix = glm::lookAt(camera.pos, center, up);
+	glm::mat4 viewMatrix = glm::lookAt(oldcamera.pos, center, up);
 
 	
 
 	
 	Shader shaderProgram("shaders/vertex/default.vert", "shaders/fragment/default.frag");
+	Shader newShaderProgram("shaders/vertex/basic.vert", "shaders/fragment/basic.frag");
 	VAO VAO1;
+	VBO VBO1;
+	EBO EBO1;
 	VAO1.Bind();
+	VBO1.Bind();
+	EBO1.Bind();
+	VBO1.BufferData(sizeof(newVertexesSquare), newVertexesSquare, GL_STATIC_DRAW);
+	EBO1.BufferData(sizeof(squareIndices), squareIndices, GL_STATIC_DRAW);
 
-	//VBO VBO1(vertices, sizeof(vertices));
-	//EBO EBO1(indices, sizeof(indices));
-
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(NewVertex), (void*)offsetof(NewVertex,pos));
+	VAO1.LinkAttrib(VBO1, 1, 4, GL_FLOAT, sizeof(NewVertex), (void*)offsetof(NewVertex, color));
 	
-	//VBO VBO1(squareVertex.data(), sizeof(squareVertex));
-	//EBO EBO1(squareIndices, sizeof(squareIndices));
-	// 
-	//VBO VBO1(cubeVertices.data(), sizeof(cubeVertices));
-	//EBO EBO1(cubeIndicesReversed, sizeof(cubeIndicesReversed));
-	
-	//VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 7 * sizeof(float), (void*)0);
-	//VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
-	//VAO1.LinkAttrib(VBO1, 1, 4, GL_FLOAT, 7 * sizeof(float), (void*)offsetof(Vertex, colour));
-
 	VAO1.Unbind();
-	//VBO1.Unbind();
-	//EBO1.Unbind();
+	VBO1.Unbind();
+	EBO1.Unbind();
 
 	Cube cube;
-	CubeRenderer cubeRenderer;
+	//CubeRenderer cubeRenderer;
 	glm::vec3 cubePos = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 planePos = glm::vec3(50.0f, 0.0f, 0.0f);
 
@@ -204,10 +218,17 @@ int main()
 	float amplitude = 1.0f;
 	float frequency = 0.5f;
 	glClearDepth(1.0f);
+	glDisable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
 	glEnable(GL_CULL_FACE);
-	//glMatrixMode(GL_PROJECTION);
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CCW);
+	glMatrixMode(GL_PROJECTION);
 
 	int texWidth;
 	int texHeight;
@@ -239,7 +260,8 @@ int main()
 	uint32_t format = GL_RGB;
 	uint32_t type = GL_UNSIGNED_BYTE;
 
-	glTexImage2D(GL_TEXTURE_2D, mipLevel, internalFormat, width, height, border, format, type, pixels);
+	
+	(GL_TEXTURE_2D, mipLevel, internalFormat, width, height, border, format, type, pixels);
 
 	
 	uint32_t dirtID;
@@ -285,6 +307,59 @@ int main()
 
 	shaderProgram.UploadInt("uTexture", textureSlot);
 
+	float fov = 45.f;
+	float near = 0.01f;
+	float far = 10000.0f;
+	float windowAspect = ((float)window.Width() / (float)window.Height());
+
+	Renderer* renderer = new Renderer();
+	FPSCamera* camera = new FPSCamera(fov, windowAspect, near, far, 0.25f);
+
+	inputMan->ResetMousePositionDelta(window.GetWindow());
+
+	Chunk* chunk = new Chunk(glm::vec3(0.0f,0.0f, 0.0f));
+
+	Chunk* chunkForward = new Chunk(glm::vec3(0.0f, 0.0f, 1.0f));
+	Chunk* chunkBack = new Chunk(glm::vec3(0.0f, 0.0f, -1.0f));
+	Chunk* chunkLeft = new Chunk(glm::vec3(-1.0f, 0.0f, 0.0f));
+	Chunk* chunkRight = new Chunk(glm::vec3(1.0f, 0.0f, 0.0f));
+	
+	for (int i = 0; i < CHUNK_SIZE_X; i++)
+	{
+		for (int j = 0; j < CHUNK_SIZE_Y; j++)
+		{
+			for (int y = 0; y < CHUNK_SIZE_Z; y++)
+			{
+				chunk->SetBlock(BlockType::GRASS, glm::vec3(i, j, y));
+				chunkForward->SetBlock(BlockType::AIR, glm::vec3(i, j, y));
+				chunkBack->SetBlock(BlockType::AIR, glm::vec3(i, j, y));
+				chunkRight->SetBlock(BlockType::AIR, glm::vec3(i, j, y));
+				chunkLeft->SetBlock(BlockType::AIR, glm::vec3(i, j, y));
+			}
+		}
+	}
+
+	for (int x = 0; x < CHUNK_SIZE_X; x++)
+	{
+		for (int y = 0; y < CHUNK_SIZE_Y; y++)
+		{
+			for (int z = 0; z < CHUNK_SIZE_Z; z++)
+			{
+				if (y == CHUNK_SIZE_Y - 1) continue;
+				if (chunk->GetBlock(x, y + 1, z)->type != BlockType::AIR && chunk->GetBlock(x,y,z)->type == BlockType::GRASS)
+				{
+					chunk->SetBlock(BlockType::DIRT, glm::vec3(x, y, z));
+				}
+			}
+		}
+	}
+	
+	//chunk->SetBlock(BlockType::DIRT, glm::vec3(0.0f, 0.0f, 0.0f));
+	//chunk->SetBlock(BlockType::GRASS, glm::vec3(1.0f, 0.0f, 0.0f));
+	//chunk->SetBlock(BlockType::OAK_PLANKS, glm::vec3(2.0f, 0.0f, 0.0f));
+	
+	
+	float currentY = CHUNK_SIZE_Y - 1;
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
 
@@ -299,130 +374,74 @@ int main()
 			window.Close();
 			return -1;
 		}
-
-		if (Input::MouseScrollDelta().y > 0)
-		{
-			std::cout << "Mouse scrolled up" << std::endl;
-		}
-
-		if (Input::MouseScrollDelta().y < 0)
-		{
-			std::cout << "Mouse scrolled down" << std::endl;
-		}
-
-		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
-		{
-			std::cout << "Left mouse button down" << std::endl; 
-		}
-		if (Input::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
-		{
-			std::cout << "Left mouse button up" << std::endl;
-		}
-
-		float moveSpeed = 1.f;
+		float moveSpeed = 1.0f;
 		if (Input::GetKey(GLFW_KEY_A))
 		{
-			//obj.pos += glm::vec3(-1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
-			cubePos += glm::vec3(-1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
-
+			//camera->SetPosition(camera->GetPosition() + (camera->GetFront() * (glm::vec3(-1.0f, 0.0f, 0.0f) * -moveSpeed)));
+			camera->SetPosition(camera->GetPosition() + (camera->GetRight() * -moveSpeed));
 		}
 
 		if (Input::GetKey(GLFW_KEY_D))
 		{
-			//obj.pos += glm::vec3(1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
-			cubePos += glm::vec3(1.0f, 0.0f, 0.0f) * moveSpeed / 2.0f;
-
+			camera->SetPosition(camera->GetPosition() + (camera->GetRight() * moveSpeed));
 		}
 
 		if (Input::GetKey(GLFW_KEY_W))
 		{
-			//obj.pos += glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed / 2.0f;
-			cubePos += glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed / 2.0f;
+			camera->SetPosition(camera->GetPosition() + (camera->GetFront() * moveSpeed));
 		}
 		if (Input::GetKey(GLFW_KEY_S))
 		{
-			//obj.pos += glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed / 2.0f;
-			cubePos += glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed / 2.0f;
+			camera->SetPosition(camera->GetPosition() + (camera->GetFront() * -moveSpeed));
 		}
 
-		if (Input::GetKey(GLFW_KEY_J))
+		if (Input::GetKey(GLFW_KEY_Q))
 		{
-			amplitude += -1.0f * 0.1f;
+			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed * 0.3f));
 		}
-		if (Input::GetKey(GLFW_KEY_U))
+		if (Input::GetKey(GLFW_KEY_E))
 		{
-			frequency += -1.0f * 0.1f;
+			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed *0.3f));
 		}
 
-		if (Input::GetKey(GLFW_KEY_K))
+		if (Input::GetKeyDown(GLFW_KEY_L))
 		{
-			amplitude += 1.0f * 0.1f;
+			chunk->SetBlock(BlockType::AIR, glm::vec3(3.f, currentY, 3.f));
+			//chunk->Construct(chunkForward, chunkBack, chunkLeft, chunkRight);
+			currentY -= 1;
+			chunk->pMeshState = ChunkMeshState::Unbuilt;
 		}
 
-		if (Input::GetKey(GLFW_KEY_I))
-		{
-			frequency += 1.0f * 0.1f;
-		}
+		//shaderProgram.Activate();
+		glm::vec2 mousePosDelta = Input::MousePositionDelta();
+		//std::cout << "This is the mouse delta: x - " << mousePosDelta.x << "   y - " << mousePosDelta.y << std::endl;
+		camera->UpdateOnMouseMovement(Input::mousePosition.x, Input::mousePosition.y);
 
 
-		if (Input::GetKey(GLFW_KEY_RIGHT))
-		{
-			angle += 1.0f * moveSpeed;
-		}
-		if (Input::GetKey(GLFW_KEY_LEFT))
-		{
-			angle += -1.0f * moveSpeed;
-		}
-
-		if (Input::GetKey(GLFW_KEY_UP))
-		{
-			yAngle += 1.0f * moveSpeed;
-		}
-		if (Input::GetKey(GLFW_KEY_DOWN))
-		{
-			yAngle += -1.0f * moveSpeed;
-		}
-
-		float fov = 45.f;
-		float near = 0.01f;
-		float far = 10000.0f;
-		float windowAspect = ((float)window.Width() / (float)window.Height());
-		glm::mat4 projection = glm::perspective(fov, windowAspect, near, far);
-
-		//camera.pos.x = 2.0f * glm::sin(glm::pi<float>() * 2 * angle / 360);
-		//camera.pos.z = 2.0f * glm::cos(glm::pi<float>() * 2 * angle / 360);
-
-		glm::mat4 newViewMatrix = glm::lookAt(camera.pos, center, up);
-
-		glm::mat4 newTransform(1);
-		newTransform = glm::scale(newTransform, scale);
-		newTransform = glm::rotate(newTransform, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
-		newTransform = glm::rotate(newTransform, glm::radians(yAngle), glm::vec3(1.0f, 0.0f, 0.0f));
-		newTransform = glm::translate(newTransform, cubePos); // Movement is in local space not global ( I think?)
-		// Need to update 
-
+		
 		// Set the background colour
 		glClearColor(250.0f / 255.0f, 119.0f / 255.0f, 110.0f / 255.0f, 1.0f);
 		// Clears the screen using the set colour
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		shaderProgram.Activate();
-		//VAO1.Bind();
+		/*
+		VAO1.Bind();
+		newShaderProgram.Activate();
+		glDrawElements(GL_TRIANGLES, 100, GL_UNSIGNED_INT, (void*)0);
+		VAO1.Unbind();
+		*/
+		//cube.DrawCube(glm::vec3(0.0f, 0.0f, 0.0f), shaderProgram);
+		//plane.DrawPlane(glm::vec3(0.0f, 0.0f, 0.0f), shaderProgram);
 
-		GLint transformLoc = glGetUniformLocation(shaderProgram.ID, "uTransform");
-		GLint projectionLoc = glGetUniformLocation(shaderProgram.ID, "uProjection");
-		GLint viewLoc = glGetUniformLocation(shaderProgram.ID, "uView");
+		glUseProgram(0);
 
-		// Uploads matrices to the shader
-		shaderProgram.UploadMat4("uProjection", projection);
-		shaderProgram.UploadMat4("uView", newViewMatrix);
-		shaderProgram.UploadMat4("uTransform", newTransform);
-		shaderProgram.UploadFloat("uFrequency", frequency);
-		shaderProgram.UploadFloat("uAmplitude", amplitude);
-		shaderProgram.UploadInt("uTexture", textureSlot);
-		cubeRenderer.RenderCube(cubePos, 0, projection,shaderProgram, newViewMatrix);
-		//cube.DrawCube(cubePos, shaderProgram);
-		//plane.DrawPlane(planePos, shaderProgram);
-		
+		if (chunk->pMeshState == ChunkMeshState::Unbuilt)
+			chunk->Construct(chunkForward, chunkBack, chunkLeft, chunkRight);
+
+		camera->Refresh();
+		renderer->StartChunkRendering(camera);
+		renderer->RenderChunk(chunk);
+		renderer->EndChunkRendering();
+
 
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done
 		glfwSwapBuffers(window.GetWindow());

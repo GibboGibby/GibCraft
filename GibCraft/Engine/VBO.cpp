@@ -7,11 +7,23 @@ VBO::VBO(GLfloat* vertices, GLsizeiptr size)
 	glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 }
 
-VBO::VBO(Vertex* vertices, GLsizeiptr size)
+VBO::VBO(BaseCubeVertex* vertices, GLsizeiptr size)
 {
 	glGenBuffers(1, &ID);
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 	glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+}
+
+VBO::VBO()
+{
+	glGenBuffers(1, &ID);
+	this->Bind();
+}
+
+void VBO::BufferData(GLsizeiptr size, void* data, GLenum usage)
+{
+	this->Bind();
+	glBufferData(GL_ARRAY_BUFFER, size, data, usage);
 }
 
 

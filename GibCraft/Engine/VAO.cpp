@@ -13,6 +13,15 @@ void VAO::LinkAttrib(VBO VBO, GLuint layout, GLuint numComponents, GLenum type, 
 	VBO.Unbind();
 }
 
+void VAO::LinkAttribIPointer(VBO VBO, GLuint index, GLint size, GLenum type, GLsizei stride, const GLvoid* pointer)
+{
+	VBO.Bind();
+	glVertexAttribIPointer(index, size, type, stride, pointer);
+	glEnableVertexAttribArray(index);
+	VBO.Unbind();
+}
+
+
 void VAO::Bind()
 {
 	glBindVertexArray(ID);

@@ -33,7 +33,7 @@ class TesselatedPlane
 	std::vector<GLuint> vertexIndices;
 	uint32_t vao;
 	uint32_t vbo;
-	std::vector<Vertex> vertices;
+	std::vector<BaseCubeVertex> vertices;
 public:
 	TesselatedPlane(int totalSize, int pointsPerMetre);
 

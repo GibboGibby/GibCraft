@@ -14,7 +14,7 @@ struct Cube
 };
 */
 
-enum BlockType
+enum OldBlockType
 {
 	DIRT,
 	OAK_PLANK
@@ -31,7 +31,7 @@ class CubeRenderer
 
 private:
 	//std::array<glm::vec2, 2> atlasPositions = { glm::vec2(0,0), glm::vec2(1,0) };
-	std::map<BlockType, glm::vec2> atlasPosition = { {DIRT, glm::vec2(0,0)}, {OAK_PLANK, glm::vec2(1,0)} };
+	std::map<OldBlockType, glm::vec2> atlasPosition = { {OldBlockType::DIRT, glm::vec2(0,0)}, {OldBlockType::OAK_PLANK, glm::vec2(1,0)} };
 	std::array<CubeVertex, 36> vertices;
 	uint32_t vao;
 	uint32_t vbo;

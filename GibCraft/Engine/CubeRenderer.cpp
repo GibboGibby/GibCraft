@@ -33,7 +33,7 @@ CubeRenderer::CubeRenderer()
 	{
 		vertices[vertexIndex].position = cubeVertices[cubeElements[vertexIndex]];
 		vertices[vertexIndex].texCoords = texCoords[vertexIndex % 6];
-		vertices[vertexIndex].texCoords += 0.5;
+		//vertices[vertexIndex].texCoords += 0.5;
 		if (vertexIndex < 6)
 		{
 			//vertices[vertexIndex].texCoords /= 2;
@@ -41,7 +41,7 @@ CubeRenderer::CubeRenderer()
 		else
 		{
 			//vertices[vertexIndex].texCoords /= 2;
-			//vertices[vertexIndex].texCoords += 0.5;
+			vertices[vertexIndex].texCoords += 0.5;
 		}
 	}
 

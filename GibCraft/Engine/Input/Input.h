@@ -19,8 +19,11 @@ private:
 	bool* mouseButtons = new bool[8];
 	bool* prevMouseButtons = new bool[8];
 
+	glm::vec2 oldMousePos = { 0,0 };
+
 	glm::vec2 mouseDelta = { 0,0 };
 
+	glm::vec2 mousePosDelta = { 0,0 };
 public:
 
 	static glm::vec2 mousePosition;
@@ -45,10 +48,12 @@ public:
 	//static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 	static void MouseButtonCallback(GLFWwindow*, int button, int action, int mods);
 	static void ScrollCallback(GLFWwindow*, double xOffset, double yOffset);
+	void ResetMousePositionDelta(GLFWwindow* window);
 	void UpdatePrevInput();
 	void UpdateMouse(GLFWwindow* window);
 
 	static glm::vec2 MouseScrollDelta();
+	static glm::vec2 MousePositionDelta();
 	
 
 

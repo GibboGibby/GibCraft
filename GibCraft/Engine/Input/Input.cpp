@@ -90,6 +90,13 @@ void Input::ScrollCallback(GLFWwindow*, double xOffset, double yOffset)
 {
 	instance->mouseDelta = { static_cast<float>(xOffset), static_cast<float>(yOffset) };
 }
+// This is so that the mouse doesn't jump on startup
+void Input::ResetMousePositionDelta(GLFWwindow* window)
+{
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	Input::oldMousePos = { static_cast<float>(xpos), static_cast<float>(ypos) };
+}
 
 void Input::UpdatePrevInput()
 {
@@ -99,13 +106,20 @@ void Input::UpdatePrevInput()
 
 void Input::UpdateMouse(GLFWwindow* window)
 {
+	oldMousePos = Input::mousePosition;
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
 	Input::mousePosition = { static_cast<float>(xpos), static_cast<float>(ypos) };
 	mouseDelta = { 0,0 };
+	mousePosDelta = mousePosition - oldMousePos;
 }
 
 glm::vec2 Input::MouseScrollDelta()
 {
 	return instance->mouseDelta;
+}
+
+glm::vec2 Input::MousePositionDelta()
+{
+	return instance->mousePosDelta;
 }

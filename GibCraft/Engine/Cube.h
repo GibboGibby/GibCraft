@@ -23,7 +23,7 @@
 #include "GibMaths.h"
 #include "ShaderClass.h"
 
-struct Vertex
+struct BaseCubeVertex
 {
 	glm::vec3 position;
 	glm::vec2 texCoords;
@@ -35,7 +35,7 @@ struct Vertex
 
 class Cube
 {
-	std::array<Vertex, 36> vertices;
+	std::array<BaseCubeVertex, 36> vertices;
 	uint32_t vao;
 	uint32_t vbo;
 

@@ -31,6 +31,12 @@
     <Filter Include="Header Files\Engine\ECS">
       <UniqueIdentifier>{44f8d84c-9bc7-417b-bb82-25ca39169555}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\fragment">
+      <UniqueIdentifier>{daa81890-56b4-4b8a-8d46-3e9ded07f942}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\vertex">
+      <UniqueIdentifier>{2ceeb276-032f-488f-ae86-c48c433c36cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\glad.c">
@@ -63,7 +69,34 @@
     <ClCompile Include="Engine\Input\Input.cpp">
       <Filter>Source Files\Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\CubeRenderer.cpp">
+    <ClCompile Include="Engine\ChunkMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\BlockDatabase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Chunk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\FPSCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\IndexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\VertexArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\VertexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,25 +131,73 @@
     <ClInclude Include="Engine\Components\IComponent.h">
       <Filter>Header Files\Engine\ECS</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\CubeRenderer.h">
+    <ClInclude Include="Engine\Block.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ChunkMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Chunk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\BlockDatabase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\TextureAtlas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\FPSCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\IndexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\VertexArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\VertexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Fragment\default.frag">
-      <Filter>Resource Files</Filter>
+    <None Include="Shaders\Vertex\basic.vert">
+      <Filter>Resource Files\vertex</Filter>
+    </None>
+    <None Include="shaders\vertex\BlockRenderer.vert">
+      <Filter>Resource Files\vertex</Filter>
     </None>
     <None Include="Shaders\Vertex\default.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Shaders\Vertex\basic.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Shaders\Vertex\sinewave.vert">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\vertex</Filter>
     </None>
     <None Include="Shaders\Vertex\fmb.vert">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\vertex</Filter>
+    </None>
+    <None Include="Shaders\Vertex\sinewave.vert">
+      <Filter>Resource Files\vertex</Filter>
+    </None>
+    <None Include="shaders\fragment\BlockRenderer.frag">
+      <Filter>Resource Files\fragment</Filter>
+    </None>
+    <None Include="Shaders\Fragment\default.frag">
+      <Filter>Resource Files\fragment</Filter>
+    </None>
+    <None Include="shaders\fragment\basic.frag">
+      <Filter>Resource Files\fragment</Filter>
     </None>
   </ItemGroup>
 </Project>
