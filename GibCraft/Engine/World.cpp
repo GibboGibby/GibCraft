@@ -1,6 +1,21 @@
 #include "World.h"
 
 
+bool TestAABB3DCollision(const glm::vec3& pos_1, const glm::vec3& dim_1, const glm::vec3& pos_2, const glm::vec3& dim_2)
+{
+	if (pos_1.x < pos_2.x + dim_2.x &&
+		pos_1.x + dim_1.x > pos_2.x &&
+		pos_1.y < pos_2.y + dim_2.y &&
+		pos_1.y + dim_1.y > pos_2.y &&
+		pos_1.z < pos_2.z + dim_2.z &&
+		pos_1.z + dim_1.z > pos_2.z)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 World::World(int seed, const glm::vec2& window_size, const std::string& world_name) : m_WorldSeed(seed)
 {
 	//Init();
@@ -94,6 +109,148 @@ void World::Update()
 	
 }
 
+static glm::ivec3 WorldBlockToLocalBlockCoordinates(const glm::vec3& pos)
+{
+	int block_chunk_x = static_cast<int>(floor(pos.x / CHUNK_SIZE_X));
+	int block_chunk_z = static_cast<int>(floor(pos.z / CHUNK_SIZE_Z));
+	int bx = pos.x - (block_chunk_x * CHUNK_SIZE_X);
+	int by = static_cast<int>(floor(pos.y));
+	int bz = pos.z - (block_chunk_z * CHUNK_SIZE_Z);
+
+	return glm::ivec3(bx, by, bz);
+}
+
+bool World::TestRayPlayerCollision(const glm::vec3& ray_block, glm::vec3 pos)
+{
+
+	if (TestAABB3DCollision(pos, glm::vec3(0.75f, 1.5f, 0.75f), ray_block, glm::vec3(1.0f, 1.0f, 1.0f)))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void World::Raycast(bool place, FPSCamera* camera)
+{
+	glm::vec3 position = camera->GetPosition();
+	const glm::vec3& direction = camera->GetFront();
+	int max = 50; // block reach
+
+	glm::vec3 sign;
+
+	for (int i = 0; i < 3; ++i)
+		sign[i] = direction[i] > 0;
+
+	for (int i = 0; i < max; ++i)
+	{
+		glm::vec3 tvec = (floor(position + sign) - position) / direction;
+		float t = std::min(tvec.x, std::min(tvec.y, tvec.z));
+
+		position += direction * (t + 0.001f);
+
+		if (position.y >= 0 && position.y < CHUNK_SIZE_Y)
+		{
+			std::pair<Block*, Chunk*> ray_hitblock = GetBlockFromPosition(glm::vec3(
+				floor(position.x),
+				floor(position.y),
+				floor(position.z)
+			));
+
+			Block* ray_block = ray_hitblock.first;
+
+
+			if (ray_block != nullptr && ray_block->type != BlockType::AIR && ray_block->IsLiquid() == false)
+			{
+				glm::vec3 normal;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					normal[i] = (t == tvec[i]);
+
+					if (sign[i])
+					{
+						normal[i] = -normal[i];
+					}
+				}
+
+				if (place)
+				{
+					position = position + normal;
+				}
+
+				std::pair<Block*, Chunk*> edit_block;
+
+				if (position.y >= 0 && position.y < CHUNK_SIZE_Y)
+				{
+					edit_block = GetBlockFromPosition(glm::vec3(position.x, position.y, position.z));
+					glm::ivec3 local_block_pos = WorldBlockToLocalBlockCoordinates(position);
+					glm::vec2 chunk_pos = glm::vec2(edit_block.second->pPosition.x, edit_block.second->pPosition.z);
+
+					Chunk* front_chunk = RetrieveChunkFromMap(chunk_pos.x, chunk_pos.y + 1);
+					Chunk* back_chunk = RetrieveChunkFromMap(chunk_pos.x, chunk_pos.y - 1);
+					Chunk* right_chunk = RetrieveChunkFromMap(chunk_pos.x + 1, chunk_pos.y);
+					Chunk* left_chunk = RetrieveChunkFromMap(chunk_pos.x - 1, chunk_pos.y);
+
+					BlockType snd_type;
+
+					if (place && !TestRayPlayerCollision(position, camera->GetPosition()))
+					{
+						edit_block.first->type = BlockType::DIRT;
+						snd_type = edit_block.first->type;
+					}
+					else
+					{
+						snd_type = edit_block.first->type;
+
+						//Check if Bedrock
+
+						if (local_block_pos.y >= 0 && local_block_pos.y < CHUNK_SIZE_Y - 1)
+						{
+							if (edit_block.second->pChunkContents.at(local_block_pos.x).at(local_block_pos.y + 1).at(local_block_pos.z).DependsOnBelowBlock())
+							{
+								edit_block.second->pChunkContents.at(local_block_pos.x).at(local_block_pos.y + 1).at(local_block_pos.z).type = BlockType::AIR;
+							}
+						}
+
+						edit_block.first->type = BlockType::AIR;
+					}
+
+					edit_block.second->pMeshState = ChunkMeshState::Unbuilt;
+
+					if (local_block_pos.x <= 0)
+					{
+						Chunk* update_chunk = RetrieveChunkFromMap(edit_block.second->pPosition.x - 1, edit_block.second->pPosition.z);
+						update_chunk->pMeshState = ChunkMeshState::Unbuilt;
+					}
+
+					if (local_block_pos.z <= 0)
+					{
+						Chunk* update_chunk = RetrieveChunkFromMap(edit_block.second->pPosition.x, edit_block.second->pPosition.z - 1);
+						update_chunk->pMeshState = ChunkMeshState::Unbuilt;
+					}
+
+					if (local_block_pos.x >= CHUNK_SIZE_X - 1)
+					{
+						Chunk* update_chunk = RetrieveChunkFromMap(edit_block.second->pPosition.x + 1, edit_block.second->pPosition.z);
+						update_chunk->pMeshState = ChunkMeshState::Unbuilt;
+					}
+
+					if (local_block_pos.z >= CHUNK_SIZE_Z - 1)
+					{
+						Chunk* update_chunk = RetrieveChunkFromMap(edit_block.second->pPosition.x, edit_block.second->pPosition.z + 1);
+						update_chunk->pMeshState = ChunkMeshState::Unbuilt;
+					}
+
+					edit_block.second->pChunkState = ChunkState::Changed;
+
+				}
+				return;
+			}
+		}
+	}
+}
+
 void World::UpdatePlayerPosition(glm::vec3 playerPos)
 {
 	playerPosition = playerPos;
@@ -183,12 +340,26 @@ void World::RenderSingleChunk(int x, int y, FPSCamera* camera)
 
 std::pair<Block*, Chunk*> World::GetBlockFromPosition(const glm::vec3& pos) noexcept
 {
-	return std::pair<Block*, Chunk*>();
+	int block_chunk_x = static_cast<int>(floor(pos.x / CHUNK_SIZE_X));
+	int block_chunk_z = static_cast<int>(floor(pos.z / CHUNK_SIZE_Z));
+	int bx = pos.x - (block_chunk_x * CHUNK_SIZE_X);
+	int by = static_cast<int>(floor(pos.y));
+	int bz = pos.z - (block_chunk_z * CHUNK_SIZE_Z);
+
+	Chunk* chunk = RetrieveChunkFromMap(block_chunk_x, block_chunk_z);
+
+	return { &chunk->pChunkContents.at(bx).at(by).at(bz), chunk };
 }
 
 BlockType World::GetBlockTypeFromPosition(const glm::vec3& pos) noexcept
 {
-	return BlockType();
+	int block_chunk_x = static_cast<int>(floor(pos.x / CHUNK_SIZE_X));
+	int block_chunk_z = static_cast<int>(floor(pos.z / CHUNK_SIZE_Z));
+	int bx = pos.x - (block_chunk_x * CHUNK_SIZE_X);
+	int by = static_cast<int>(floor(pos.y));
+	int bz = pos.z - (block_chunk_z * CHUNK_SIZE_Z);
+
+	return static_cast<BlockType>(RetrieveChunkFromMap(block_chunk_x, block_chunk_z)->pChunkContents.at(bx).at(by).at(bz).type);
 }
 
 Chunk* World::RetrieveChunkFromMap(int cx, int cz) noexcept

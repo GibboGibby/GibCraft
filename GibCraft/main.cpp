@@ -459,9 +459,20 @@ int main()
 				}
 			}
 		}
-
 		camera->Refresh();
 		world.UpdatePlayerPosition(camera->GetPosition());
+		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_1))
+		{
+			world.Raycast(false, camera);
+		}
+
+		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_2))
+		{
+			world.Raycast(true, camera);
+		}
+
+		
+		
 		world.Update();
 		//world.RenderSingleChunk(0, 0, camera);
 		//world.RenderSingleChunk(1, 0, camera);

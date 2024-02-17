@@ -52,6 +52,8 @@ bool TestAABB3DCollision(const glm::vec3& pos_1, const glm::vec3 dim_1, const gl
 
 
 		void Update();
+
+		void Raycast(bool place, FPSCamera* camera);
 	private:
 
 		std::map<std::pair<int, int>, Chunk> m_WorldChunks;
@@ -60,7 +62,7 @@ bool TestAABB3DCollision(const glm::vec3& pos_1, const glm::vec3 dim_1, const gl
 		glm::vec3 playerPosition;
 
 		Renderer renderer;
-
+		bool TestRayPlayerCollision(const glm::vec3& ray_block, glm::vec3 pos);
 		std::unordered_set<Chunk*> loadedChunks;
 
 		int render_distance = 6;
