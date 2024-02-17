@@ -18,7 +18,7 @@ void Renderer::RenderChunk(Chunk* chunk)
 	}
 }
 
-void Renderer::StartChunkRendering(FPSCamera* camera)
+void Renderer::StartChunkRendering(FPSCamera* camera, int render_distance)
 {
 	
 	mDefaultChunkShader.Activate();
@@ -26,9 +26,9 @@ void Renderer::StartChunkRendering(FPSCamera* camera)
 	mDefaultChunkShader.UploadInt("u_Texture", 0);
 	mDefaultChunkShader.UploadMat4("u_ViewProjection", camera->GetViewProjection());
 	mDefaultChunkShader.UploadMat4("u_ViewMatrix", camera->GetViewMatrix());
-	mDefaultChunkShader.UploadInt("u_RenderDistance", 5);
+	mDefaultChunkShader.UploadInt("u_RenderDistance", render_distance);
 	mDefaultChunkShader.UploadInt("u_CHUNK_SIZE_X", CHUNK_SIZE_X);
-	mDefaultChunkShader.UploadInt("u_CHUNK_SIZE_Z", CHUNK_SIZE_Y);
+	mDefaultChunkShader.UploadInt("u_CHUNK_SIZE_Z", CHUNK_SIZE_Z);
 
 }
 

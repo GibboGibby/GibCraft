@@ -18,7 +18,7 @@ void Chunk::SetBlock(BlockType type, const glm::vec3& position)
 	pChunkContents.at(position.x).at(position.y).at(position.z) = b;
 }
 
-void Chunk::Construct(Chunk* forward, Chunk* back, Chunk* left, Chunk* right)
+void Chunk::Construct(ChunkDataTypePtr forward, ChunkDataTypePtr back, ChunkDataTypePtr left, ChunkDataTypePtr right)
 {
 	if (mChunkMesh.ConstructMesh(this, pPosition, forward, back, left, right))
 	{
@@ -26,13 +26,15 @@ void Chunk::Construct(Chunk* forward, Chunk* back, Chunk* left, Chunk* right)
 	}
 	else
 	{
+		std::cout << "Chunk is unbuilt" << std::endl;
 		pMeshState = ChunkMeshState::Unbuilt;
 	}
 }
 
-void Chunk::Construct()
+
+void Chunk::Construct(Chunk* chunks[4])
 {
-	if (mChunkMesh.CreateMesh(this, pPosition))
+	if (mChunkMesh.CreateMesh(this, pPosition, chunks))
 	{
 		pMeshState = ChunkMeshState::Built;
 	}else

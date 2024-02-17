@@ -24,11 +24,11 @@ private:
 public:
 	ChunkMesh();
 
-	bool CreateMesh(Chunk* chunk, const glm::vec3& chunk_pos);
+	bool CreateMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* chunks[4]);
 
-	bool ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* forwardChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk);
+	bool ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr forwardChunk, ChunkDataTypePtr backChunk, ChunkDataTypePtr leftChunk, ChunkDataTypePtr rightChunk);
 
-	void AddCube();
+	//void AddCube();
 
 	void AddFace(Chunk* chunk, BlockFace face, const glm::vec3& position, BlockType type, bool buffer = true);
 	VertexArray pVAO;

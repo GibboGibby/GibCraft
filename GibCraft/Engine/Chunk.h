@@ -34,8 +34,8 @@ public:
 
 	void SetBlock(BlockType type, const glm::vec3& position);
 	
-	void Construct(Chunk* forward, Chunk* back, Chunk* left, Chunk* right);
-	void Construct();
+	void Construct(ChunkDataTypePtr forward, ChunkDataTypePtr back, ChunkDataTypePtr left, ChunkDataTypePtr right);
+	void Construct(Chunk* chunks[4]);
 	ChunkMesh* GetChunkMesh();
 
 	Block* GetBlock(int x, int y, int z);

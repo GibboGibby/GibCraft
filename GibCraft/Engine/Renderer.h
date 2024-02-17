@@ -12,7 +12,7 @@ class Renderer
 public:
 	Renderer();
 
-	void StartChunkRendering(FPSCamera* camera);
+	void StartChunkRendering(FPSCamera* camera, int render_distacne);
 	void RenderChunk(Chunk* chunk);
 	void EndChunkRendering();
 

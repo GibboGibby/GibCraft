@@ -8,7 +8,7 @@
 ChunkMesh::ChunkMesh() : mVBO(GL_ARRAY_BUFFER)
 {
 
-	std::cout << "Max size of the vertices vector - " << mVertices.max_size();
+	//std::cout << "Max size of the vertices vector - " << mVertices.max_size();
 	static bool IndexBufferInitialized = false;
 
 	// Static index buffer
@@ -80,7 +80,7 @@ ChunkMesh::ChunkMesh() : mVBO(GL_ARRAY_BUFFER)
 	m_RightFace[3] = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
 }
 
-bool ChunkMesh::ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* forwardChunk, Chunk* backChunk, Chunk* leftChunk, Chunk* rightChunk)
+bool ChunkMesh::ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr ForwardChunkData, ChunkDataTypePtr BackwardChunkData, ChunkDataTypePtr RightChunkData, ChunkDataTypePtr LeftChunkData)
 {
 	ChunkDataTypePtr ChunkData = &chunk->pChunkContents;
 
@@ -88,10 +88,7 @@ bool ChunkMesh::ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* f
 	glm::vec3 local_position;
 	mVertices.clear();
 
-	ChunkDataTypePtr ForwardChunkData = &forwardChunk->pChunkContents;
-	ChunkDataTypePtr BackwardChunkData = &backChunk->pChunkContents;
-	ChunkDataTypePtr RightChunkData = &rightChunk->pChunkContents;
-	ChunkDataTypePtr LeftChunkData = &leftChunk->pChunkContents;
+	
 
 	if (ForwardChunkData && BackwardChunkData && RightChunkData && LeftChunkData)
 	{
@@ -384,20 +381,21 @@ bool ChunkMesh::ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* f
 		return true;
 	}
 
+	//std::cout << "One of chunk dir is nullptr" << std::endl;
 	return false;
 }
 
-bool ChunkMesh::CreateMesh(Chunk* chunk, const glm::vec3& chunk_pos)
+bool ChunkMesh::CreateMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* chunks[4])
 {
 	ChunkDataTypePtr ChunkData = &chunk->pChunkContents;
 	glm::vec3 worldPos;
 	glm::vec3 localPos;
 	mVertices.clear();
 	int numVertexes = 0;
-	Chunk* forwardChunk = new Chunk(glm::vec3(0.0f,0.0f,16.0f));
-	Chunk* backwardChunk = new Chunk(glm::vec3(0.0f,0.0f,-16.0f));
-	Chunk* leftChunk = new Chunk(glm::vec3(-16.0f,0.0f,0.0f));
-	Chunk* rightChunk = new Chunk(glm::vec3(16.0f,0.0f,0.0f));
+	Chunk* forwardChunk = chunks[0];
+	Chunk* backwardChunk = chunks[1];
+	Chunk* leftChunk = chunks[2];
+	Chunk* rightChunk = chunks[3];
 
 	ChunkDataTypePtr ForwardChunkData = &forwardChunk->pChunkContents;
 	ChunkDataTypePtr BackwardChunkData = &backwardChunk->pChunkContents;

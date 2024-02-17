@@ -17,6 +17,7 @@
 #include "Engine/Renderer.h"
 #include "Engine/FPSCamera.h"
 
+#include "Engine/World.h"
 int main()
 {
 
@@ -228,7 +229,7 @@ int main()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
 	glFrontFace(GL_CCW);
-	glMatrixMode(GL_PROJECTION);
+	//glMatrixMode(GL_PROJECTION);
 
 	int texWidth;
 	int texHeight;
@@ -357,7 +358,11 @@ int main()
 	//chunk->SetBlock(BlockType::DIRT, glm::vec3(0.0f, 0.0f, 0.0f));
 	//chunk->SetBlock(BlockType::GRASS, glm::vec3(1.0f, 0.0f, 0.0f));
 	//chunk->SetBlock(BlockType::OAK_PLANKS, glm::vec3(2.0f, 0.0f, 0.0f));
-	
+	World world;
+	world.UpdatePlayerPosition(camera->GetPosition());
+	world.Update();
+	glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//world.Init();
 	
 	float currentY = CHUNK_SIZE_Y - 1;
 	while (!glfwWindowShouldClose(window.GetWindow()))
@@ -434,13 +439,41 @@ int main()
 
 		glUseProgram(0);
 
+		/*
 		if (chunk->pMeshState == ChunkMeshState::Unbuilt)
 			chunk->Construct(chunkForward, chunkBack, chunkLeft, chunkRight);
+		*/
+
+		if (Input::GetKeyDown(GLFW_KEY_P))
+		{
+			Chunk* thing = world.RetrieveChunkFromMap(0,0);
+			for (int x = 0; x < CHUNK_SIZE_X; x++)
+			{ 
+				for (int y = 0; y < CHUNK_SIZE_Y; y++)
+				{
+					for (int z = 0; z < CHUNK_SIZE_Z; z++)
+					{
+						thing->SetBlock(BlockType::AIR, glm::vec3(x, y, z));
+						thing->pMeshState = ChunkMeshState::Unbuilt;
+					}
+				}
+			}
+		}
 
 		camera->Refresh();
-		renderer->StartChunkRendering(camera);
+		world.UpdatePlayerPosition(camera->GetPosition());
+		world.Update();
+		//world.RenderSingleChunk(0, 0, camera);
+		//world.RenderSingleChunk(1, 0, camera);
+		//world.RenderSingleChunk(0, 1, camera);
+		world.RenderWorld(camera);
+
+		
+		/*
+		renderer->StartChunkRendering(camera, 5);
 		renderer->RenderChunk(chunk);
 		renderer->EndChunkRendering();
+		*/
 
 
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done

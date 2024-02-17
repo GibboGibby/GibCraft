@@ -41,7 +41,9 @@ void Texture::CreateTexture(std::string path, bool flip, GLenum type, GLenum min
 		internalFormat = GL_RGBA;
 
 	glTexImage2D(type, 0, internalFormat, m_width, m_height, 0, internalFormat, GL_UNSIGNED_BYTE, image);
-	//glGenerateMipmap(type);
+	glGenerateMipmap(type);
+	// 
+	// (type);
 
 	if (image && clean_up)
 	{

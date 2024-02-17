@@ -46,7 +46,7 @@ public:
 	}
 
 	void CreateTexture(std::string path, bool flip = true, GLenum type = GL_TEXTURE_2D,
-		GLenum min_filter = GL_NEAREST, GLenum mag_filter = GL_NEAREST,
+		GLenum min_filter = GL_NEAREST_MIPMAP_NEAREST, GLenum mag_filter = GL_NEAREST,
 		GLenum texwrap_s = GL_REPEAT, GLenum texwrap_t = GL_REPEAT, std::array<GLfloat, 8> TextureCoords = { 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }, bool clean_up = true);
 
 	void IntCreateTexture(GLuint id, std::array<GLfloat, 8> tex_coords, int w, int h, bool delete_texture);
