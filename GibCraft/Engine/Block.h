@@ -6,6 +6,8 @@ enum BlockType
 	OAK_PLANKS,
 	DIRT,
 	GRASS,
+	STONE,
+	COBBLESTONE,
 	UNKNOWN
 };
 

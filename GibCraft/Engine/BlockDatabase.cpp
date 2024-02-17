@@ -8,6 +8,8 @@ namespace BlockDatabase
 		GrassTop,
 		GrassFront,
 		GrassSide,
+		Stone,
+		Cobblestone,
 
 		UnknownBlockType
 	};
@@ -29,6 +31,12 @@ namespace BlockDatabase
 			break;
 		case DIRT:
 			retVal = BlockTypeTexture::Dirt;
+			break;
+		case COBBLESTONE:
+			retVal = BlockTypeTexture::Cobblestone;
+			break;
+		case STONE:
+			retVal = BlockTypeTexture::Stone;
 			break;
 		case GRASS:
 			if (face == BlockFace::FRONT || face == BlockFace::BACK)
@@ -52,7 +60,7 @@ namespace BlockDatabase
 		{
 			TextureAtlas BlockTextureAtlas("resources\\textures\\atlas.png", 16, 16);
 			first_run = false;
-			constexpr int list_sz = 6;
+			constexpr int list_sz = 8;
 			BlockTypeTexture texture_list[list_sz] =
 			{
 				BlockTypeTexture::Dirt,
@@ -60,6 +68,8 @@ namespace BlockDatabase
 				BlockTypeTexture::GrassTop,
 				BlockTypeTexture::GrassSide,
 				BlockTypeTexture::GrassFront,
+				BlockTypeTexture::Stone,
+				BlockTypeTexture::Cobblestone,
 				BlockTypeTexture::UnknownBlockType
 			};
 

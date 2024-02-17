@@ -61,6 +61,8 @@ void World::Update()
 	{
 		for (int j = player_chunk_z - build_distance; j < player_chunk_z + build_distance; j++)
 		{
+
+			BlockType type = (i % 2 == 0 && j % 2 == 0) ? BlockType::OAK_PLANKS : BlockType::COBBLESTONE;
 			if (!ChunkExistsInMap(i, j))
 			{
 				Chunk* chunk = EmplaceChunkInMap(i, j);
@@ -71,7 +73,7 @@ void World::Update()
 						for (int z = 0; z < CHUNK_SIZE_Z; z++)
 						{
 							if (y < 128)
-								chunk->SetBlock(BlockType::OAK_PLANKS, glm::vec3(x, y, z));
+								chunk->SetBlock(type, glm::vec3(x, y, z));
 							else
 								chunk->SetBlock(BlockType::AIR, glm::vec3(x, y, z));
 						}
