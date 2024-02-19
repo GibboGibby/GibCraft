@@ -1,8 +1,22 @@
 #include "Chunk.h"
 
 Chunk::Chunk(const glm::vec3 chunkPos) : pPosition(chunkPos), pMeshState(ChunkMeshState::Unbuilt), pChunkState(ChunkState::Ungenerated)
+
 {
-	memset(&pChunkContents, BlockType::AIR, CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z);
+	//memset(&pChunkContents, BlockType::AIR, CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z);
+	//std::fill(std::begin(pChunkContents, std::end(pChunkContents)), BlockType::AIR);
+	//std::fill_n(&pChunkContents[0][0][0], CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z, BlockType::AIR);
+	for (int x = 0; x < CHUNK_SIZE_X; x++)
+	{
+		for (int y = 0; y < CHUNK_SIZE_Y; y++)
+		{
+			for (int z = 0; z < CHUNK_SIZE_Z; z++)
+			{
+				SetBlock(BlockType::AIR, glm::vec3(x, y, z));
+			}
+		}
+	}
+	memset(&p_HeightMap, 0, CHUNK_SIZE_X * CHUNK_SIZE_Z * sizeof(std::uint8_t));
 }
 
 Chunk::~Chunk()

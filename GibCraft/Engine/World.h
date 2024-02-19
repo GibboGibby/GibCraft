@@ -7,6 +7,8 @@
 #include <map>
 #include "Renderer.h"
 #include <unordered_set>
+#include <thread>
+#include "WorldGen.h"
 
 /*
 bool TestAABB3DCollision(const glm::vec3& pos_1, const glm::vec3 dim_1, const glm::vec3& pos_2, const glm::vec3& dim_2)
@@ -53,19 +55,36 @@ bool TestAABB3DCollision(const glm::vec3& pos_1, const glm::vec3 dim_1, const gl
 
 		void Update();
 
+		void UpdateFramePause();
+
 		void Raycast(bool place, FPSCamera* camera);
+		void CreateWorldGenThread();
 	private:
+
+		void GenerateAndBuildMesh(FPSCamera* camera);
+
+		void ThreadedWorldGenAndMeshing();
+		
+
+		std::unordered_set<Chunk*> toGenerate;
+		std::unordered_set<Chunk*> toMesh;
+		std::unordered_set<Chunk*> toRender;
 
 		std::map<std::pair<int, int>, Chunk> m_WorldChunks;
 		long long m_CurrentFrame;
 		const int m_WorldSeed;
 		glm::vec3 playerPosition;
 
+		bool shouldThread = true;
+
 		Renderer renderer;
 		bool TestRayPlayerCollision(const glm::vec3& ray_block, glm::vec3 pos);
 		std::unordered_set<Chunk*> loadedChunks;
 
 		int render_distance = 6;
+		bool thread_started = false;
+
+		bool framePause = false;
 	}; 
 
 #endif // !WORLD_CLASS_H

@@ -317,54 +317,15 @@ int main()
 	FPSCamera* camera = new FPSCamera(fov, windowAspect, near, far, 0.25f);
 
 	inputMan->ResetMousePositionDelta(window.GetWindow());
-
-	Chunk* chunk = new Chunk(glm::vec3(0.0f,0.0f, 0.0f));
-
-	Chunk* chunkForward = new Chunk(glm::vec3(0.0f, 0.0f, 1.0f));
-	Chunk* chunkBack = new Chunk(glm::vec3(0.0f, 0.0f, -1.0f));
-	Chunk* chunkLeft = new Chunk(glm::vec3(-1.0f, 0.0f, 0.0f));
-	Chunk* chunkRight = new Chunk(glm::vec3(1.0f, 0.0f, 0.0f));
 	
-	for (int i = 0; i < CHUNK_SIZE_X; i++)
-	{
-		for (int j = 0; j < CHUNK_SIZE_Y; j++)
-		{
-			for (int y = 0; y < CHUNK_SIZE_Z; y++)
-			{
-				chunk->SetBlock(BlockType::GRASS, glm::vec3(i, j, y));
-				chunkForward->SetBlock(BlockType::AIR, glm::vec3(i, j, y));
-				chunkBack->SetBlock(BlockType::AIR, glm::vec3(i, j, y));
-				chunkRight->SetBlock(BlockType::AIR, glm::vec3(i, j, y));
-				chunkLeft->SetBlock(BlockType::AIR, glm::vec3(i, j, y));
-			}
-		}
-	}
-
-	for (int x = 0; x < CHUNK_SIZE_X; x++)
-	{
-		for (int y = 0; y < CHUNK_SIZE_Y; y++)
-		{
-			for (int z = 0; z < CHUNK_SIZE_Z; z++)
-			{
-				if (y == CHUNK_SIZE_Y - 1) continue;
-				if (chunk->GetBlock(x, y + 1, z)->type != BlockType::AIR && chunk->GetBlock(x,y,z)->type == BlockType::GRASS)
-				{
-					chunk->SetBlock(BlockType::DIRT, glm::vec3(x, y, z));
-				}
-			}
-		}
-	}
-	
-	//chunk->SetBlock(BlockType::DIRT, glm::vec3(0.0f, 0.0f, 0.0f));
-	//chunk->SetBlock(BlockType::GRASS, glm::vec3(1.0f, 0.0f, 0.0f));
-	//chunk->SetBlock(BlockType::OAK_PLANKS, glm::vec3(2.0f, 0.0f, 0.0f));
-	World world;
+	World world(1254125, glm::vec2(0,0), "Gaming");
 	world.UpdatePlayerPosition(camera->GetPosition());
 	world.Update();
+	//world.CreateWorldGenThread();
 	glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//world.Init();
 	
-	float currentY = CHUNK_SIZE_Y - 1;
+	
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
 
@@ -409,13 +370,6 @@ int main()
 			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed *0.3f));
 		}
 
-		if (Input::GetKeyDown(GLFW_KEY_L))
-		{
-			chunk->SetBlock(BlockType::AIR, glm::vec3(3.f, currentY, 3.f));
-			//chunk->Construct(chunkForward, chunkBack, chunkLeft, chunkRight);
-			currentY -= 1;
-			chunk->pMeshState = ChunkMeshState::Unbuilt;
-		}
 
 		//shaderProgram.Activate();
 		glm::vec2 mousePosDelta = Input::MousePositionDelta();
@@ -478,6 +432,8 @@ int main()
 		//world.RenderSingleChunk(1, 0, camera);
 		//world.RenderSingleChunk(0, 1, camera);
 		world.RenderWorld(camera);
+
+		world.UpdateFramePause();
 
 		
 		/*

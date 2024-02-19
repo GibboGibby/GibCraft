@@ -4,6 +4,7 @@
 #include <string>
 #include <queue>
 #include <array>
+#include <algorithm>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,6 +17,7 @@ enum class ChunkMeshState : std::uint8_t
 {
 	Built = 0,
 	Unbuilt,
+	Building,
 	Error
 };
 
@@ -43,6 +45,7 @@ public:
 	const glm::vec3 pPosition;
 	ChunkMeshState pMeshState;
 	ChunkState pChunkState = ChunkState::Ungenerated;
+	std::array<std::array<uint8_t, CHUNK_SIZE_X>, CHUNK_SIZE_Z> p_HeightMap;
 	std::array<std::array<std::array<Block, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z> pChunkContents;
 
 private:

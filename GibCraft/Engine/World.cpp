@@ -21,9 +21,18 @@ World::World(int seed, const glm::vec2& window_size, const std::string& world_na
 	//Init();
 }
 
-World::World() : m_WorldSeed(0)
+World::World() : m_WorldSeed(5213)
 {
 	//Init();
+	
+}
+
+void World::CreateWorldGenThread()
+{
+	if (thread_started) return;
+	std::thread thr = std::thread(&World::ThreadedWorldGenAndMeshing, this);
+	thr.detach();
+	thread_started = true;
 }
 
 void World::Init()
@@ -61,33 +70,19 @@ void World::Update()
 	{
 		for (int j = player_chunk_z - build_distance; j < player_chunk_z + build_distance; j++)
 		{
-
-			BlockType type = (i % 2 == 0 && j % 2 == 0) ? BlockType::OAK_PLANKS : BlockType::COBBLESTONE;
 			if (!ChunkExistsInMap(i, j))
 			{
 				Chunk* chunk = EmplaceChunkInMap(i, j);
-				for (int x = 0; x < CHUNK_SIZE_X; x++)
-				{
-					for (int y = 0; y < CHUNK_SIZE_Y; y++)
-					{
-						for (int z = 0; z < CHUNK_SIZE_Z; z++)
-						{
-							if (y < 128)
-								chunk->SetBlock(type, glm::vec3(x, y, z));
-							else
-								chunk->SetBlock(BlockType::AIR, glm::vec3(x, y, z));
-						}
-					}
-				}
+				WorldGen::GenerateChunk(chunk, m_WorldSeed);
 			}
 			else
 			{
-				Chunk* chunk = EmplaceChunkInMap(i, j);
-				loadedChunks.insert(chunk);
+				//Chunk* chunk = EmplaceChunkInMap(i, j);
+				//loadedChunks.insert(chunk);
 			}
 		}
 	}
-
+	
 	std::vector<Chunk*> toRemove;
 	
 	for (auto chunk : loadedChunks)
@@ -109,6 +104,12 @@ void World::Update()
 		loadedChunks.erase(toRemove[i]);
 	}
 	
+	
+}
+
+void World::UpdateFramePause()
+{
+	framePause = false;
 }
 
 static glm::ivec3 WorldBlockToLocalBlockCoordinates(const glm::vec3& pos)
@@ -253,6 +254,115 @@ void World::Raycast(bool place, FPSCamera* camera)
 	}
 }
 
+void World::GenerateAndBuildMesh(FPSCamera* camera)
+{
+	int player_chunk_x = 0;
+	int player_chunk_z = 0;
+
+	player_chunk_x = (int)floor(camera->GetPosition().x / CHUNK_SIZE_X);
+	player_chunk_z = (int)floor(camera->GetPosition().z / CHUNK_SIZE_Z);
+
+	for (int i = player_chunk_x - render_distance; i < player_chunk_x + render_distance; i++)
+	{
+		for (int j = player_chunk_z - render_distance; j < player_chunk_z + render_distance; j++)
+		{
+			Chunk* chunk = RetrieveChunkFromMap(i, j);
+			//if (BoxInFrustum())
+
+			if (chunk->pMeshState == ChunkMeshState::Unbuilt)
+				chunk->Construct(GetChunkDataForMeshing(i, j + 1), GetChunkDataForMeshing(i, j - 1), GetChunkDataForMeshing(i - 1, j), GetChunkDataForMeshing(i + 1, j));
+		}
+	}
+}
+
+void World::ThreadedWorldGenAndMeshing()
+{
+	while (shouldThread)
+	{
+		if (framePause) continue;
+		int player_chunk_x = (int)floor(playerPosition.x / CHUNK_SIZE_X);
+		int player_chunk_z = (int)floor(playerPosition.z / CHUNK_SIZE_Z);
+
+		int build_distance = render_distance + 4;
+		std::vector<Chunk*> toRemoveGen;
+		std::vector<Chunk*> toRemoveMesh;
+		std::vector<Chunk*> toRemoveRender;
+		if (toGenerate.size() > 0)
+		{
+			for (Chunk* chunk : toGenerate)
+			{
+				BlockType type = (static_cast<int>(chunk->pPosition.x) % 2 == 0 && static_cast<int>(chunk->pPosition.z) % 2 == 0) ? BlockType::OAK_PLANKS : BlockType::COBBLESTONE;
+				for (int x = 0; x < CHUNK_SIZE_X; x++)
+				{
+					for (int y = 0; y < CHUNK_SIZE_Y; y++)
+					{
+						for (int z = 0; z < CHUNK_SIZE_Z; z++)
+						{
+							if (y < 128)
+								chunk->SetBlock(type, glm::vec3(x, y, z));
+							else
+								chunk->SetBlock(BlockType::AIR, glm::vec3(x, y, z));
+						}
+					}
+				}
+				chunk->pChunkState = ChunkState::Generated;
+				toRemoveGen.push_back(chunk);
+			}
+		}
+		if (toMesh.size() > 0)
+		{
+			for (Chunk* chunk : toMesh)
+			{
+				int i = static_cast<int>(chunk->pPosition.x);
+				int j = static_cast<int>(chunk->pPosition.z);
+				chunk->Construct(GetChunkDataForMeshing(i, j + 1), GetChunkDataForMeshing(i, j - 1), GetChunkDataForMeshing(i - 1, j), GetChunkDataForMeshing(i + 1, j));
+				if (chunk->pMeshState == ChunkMeshState::Built) toRemoveMesh.push_back(chunk);
+
+			}
+		}
+
+
+		
+
+		std::vector<Chunk*> toRemove;
+		if (loadedChunks.size() > 0)
+		{
+			for (auto chunk : loadedChunks)
+			{
+
+				if (!chunk) return;
+				if (chunk->pPosition.x < player_chunk_x - build_distance || chunk->pPosition.z < player_chunk_z - build_distance || chunk->pPosition.x > player_chunk_x + build_distance || chunk->pPosition.z > player_chunk_z + build_distance)
+				{
+					//delete chunk;
+
+					//loadedChunks.erase(chunk);
+					toRemove.push_back(chunk);
+				}
+			}
+		}
+		
+
+		for (int i = 0; i < toRemove.size(); i++)
+		{
+			RemoveChunkInMap(static_cast<int>(toRemove[i]->pPosition.x), static_cast<int>(toRemove[i]->pPosition.z));
+			loadedChunks.erase(toRemove[i]);
+		}
+
+		for (int i = 0; i < toRemoveGen.size(); i++)
+		{
+			toGenerate.erase(toRemoveGen[i]);
+		}
+
+		for (int i = 0; i < toRemoveMesh.size(); i++)
+		{
+			toMesh.erase(toRemoveMesh[i]);
+		}
+
+
+		//framePause = true;
+	}
+}
+
 void World::UpdatePlayerPosition(glm::vec3 playerPos)
 {
 	playerPosition = playerPos;
@@ -299,12 +409,14 @@ void World::RenderWorld(FPSCamera* camera)
 			//if (BoxInFrustum())
 
 			if (chunk->pMeshState == ChunkMeshState::Unbuilt)
-				chunk->Construct(GetChunkDataForMeshing(i, j + 1), GetChunkDataForMeshing(i, j - 1), GetChunkDataForMeshing(i - 1, j), GetChunkDataForMeshing(i + 1, j));
+			{
+				chunk->Construct(GetChunkDataForMeshing(i, j + 1), GetChunkDataForMeshing(i, j - 1), GetChunkDataForMeshing(i + 1, j), GetChunkDataForMeshing(i - 1, j));
+				//toMesh.insert(chunk);
+				//chunk->pMeshState = ChunkMeshState::Building;
+			}
 
 			if (chunk->pMeshState == ChunkMeshState::Built)
 				renderer.RenderChunk(chunk);
-
-			
 		}
 	}
 	renderer.EndChunkRendering();	
@@ -412,6 +524,6 @@ void World::RemoveChunkInMap(int cx, int cz)
 	{
 		return;
 	}
-	std::cout << "removing chunk at x - " << cx << " and z - " << cz << std::endl;
+	//std::cout << "removing chunk at x - " << cx << " and z - " << cz << std::endl;
 	m_WorldChunks.erase(std::pair<int, int>(cx, cz));
 }

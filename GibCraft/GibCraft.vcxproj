@@ -143,6 +143,7 @@
     <ClCompile Include="Engine\ChunkMesh.cpp" />
     <ClCompile Include="Engine\Cube.cpp" />
     <ClCompile Include="Engine\EBO.cpp" />
+    <ClCompile Include="Engine\FastNoise.cpp" />
     <ClCompile Include="Engine\FPSCamera.cpp" />
     <ClCompile Include="Engine\glad.c" />
     <ClCompile Include="Engine\IndexBuffer.cpp" />
@@ -153,6 +154,7 @@
     <ClCompile Include="Engine\VertexArray.cpp" />
     <ClCompile Include="Engine\VertexBuffer.cpp" />
     <ClCompile Include="Engine\World.cpp" />
+    <ClCompile Include="Engine\WorldGen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\ShaderClass.cpp" />
     <ClCompile Include="Engine\TesselatedPlane.cpp" />
@@ -170,10 +172,12 @@
     <ClInclude Include="Engine\Cube.h" />
     <ClInclude Include="Engine\Defs.h" />
     <ClInclude Include="Engine\EBO.h" />
+    <ClInclude Include="Engine\FastNoise.h" />
     <ClInclude Include="Engine\FPSCamera.h" />
     <ClInclude Include="Engine\GibMaths.h" />
     <ClInclude Include="Engine\IndexBuffer.h" />
     <ClInclude Include="Engine\Input\Input.h" />
+    <ClInclude Include="Engine\Random.h" />
     <ClInclude Include="Engine\Raycast.h" />
     <ClInclude Include="Engine\Renderer.h" />
     <ClInclude Include="Engine\ShaderClass.h" />
@@ -187,6 +191,7 @@
     <ClInclude Include="Engine\VertexBuffer.h" />
     <ClInclude Include="Engine\Window.h" />
     <ClInclude Include="Engine\World.h" />
+    <ClInclude Include="Engine\WorldGen.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment\basic.frag" />
