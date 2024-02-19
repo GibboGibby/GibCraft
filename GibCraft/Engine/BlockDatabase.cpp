@@ -48,7 +48,11 @@ namespace BlockDatabase
 			else if (face == BlockFace::BOTTOM)
 				retVal = BlockTypeTexture::Dirt;
 			break;
+		case UNKNOWN:
+			retVal = BlockTypeTexture::UnknownBlockType;
+			break;
 		}
+		
 
 		return retVal;
 	}
