@@ -385,6 +385,316 @@ bool ChunkMesh::ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDat
 	return false;
 }
 
+bool ChunkMesh::ConstructMeshNoBind(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr ForwardChunkData, ChunkDataTypePtr BackwardChunkData, ChunkDataTypePtr RightChunkData, ChunkDataTypePtr LeftChunkData)
+{
+	ChunkDataTypePtr ChunkData = &chunk->pChunkContents;
+
+	glm::vec3 world_position;
+	glm::vec3 local_position;
+	mVertices.clear();
+
+
+
+	if (ForwardChunkData && BackwardChunkData && RightChunkData && LeftChunkData)
+	{
+		for (int x = 0; x < CHUNK_SIZE_X; x++)
+		{
+			for (int y = 0; y < CHUNK_SIZE_Y; y++)
+			{
+				for (int z = 0; z < CHUNK_SIZE_Z; z++)
+				{
+					if (ChunkData->at(x).at(y).at(z).type != BlockType::AIR)
+					{
+						Block* block = &ChunkData->at(x).at(y).at(z);
+
+						// To fix chunk edge mesh building issues, both faces are added if it is in the edge
+
+						world_position.x = chunk_pos.x * CHUNK_SIZE_X + x;
+						world_position.y = 0 * CHUNK_SIZE_Y + y;
+						world_position.z = chunk_pos.z * CHUNK_SIZE_Z + z;
+						local_position = glm::vec3(x, y, z);
+
+
+						if (z <= 0)
+						{
+							if (block->IsTransparent())
+							{
+								if (BackwardChunkData->at(x).at(y).at(CHUNK_SIZE_Z - 1).IsTransparent() &&
+									BackwardChunkData->at(x).at(y).at(CHUNK_SIZE_Z - 1).type != block->type)
+								{
+									AddFace(chunk, BlockFace::FRONT, local_position, block->type, false);
+									AddFace(chunk, BlockFace::BACK, local_position, block->type, false);
+								}
+
+								else if (ChunkData->at(x).at(y).at(1).IsTransparent() &&
+									ChunkData->at(x).at(y).at(1).type != block->type)
+								{
+									AddFace(chunk, BlockFace::FRONT, local_position, block->type, false);
+									AddFace(chunk, BlockFace::BACK, local_position, block->type, false);
+								}
+							}
+
+							else
+							{
+								if (BackwardChunkData->at(x).at(y).at(CHUNK_SIZE_Z - 1).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::FRONT, local_position, block->type);
+									AddFace(chunk, BlockFace::BACK, local_position, block->type);
+								}
+
+								else if (ChunkData->at(x).at(y).at(1).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::FRONT, local_position, block->type);
+									AddFace(chunk, BlockFace::BACK, local_position, block->type);
+								}
+							}
+						}
+
+						else if (z >= CHUNK_SIZE_Z - 1)
+						{
+							if (block->IsTransparent())
+							{
+								if (ForwardChunkData->at(x).at(y).at(0).IsTransparent() &&
+									ForwardChunkData->at(x).at(y).at(0).type != block->type)
+								{
+									AddFace(chunk, BlockFace::FRONT, local_position, block->type, false);
+									AddFace(chunk, BlockFace::BACK, local_position, block->type, false);
+								}
+
+								else if (ChunkData->at(x).at(y).at(CHUNK_SIZE_Z - 2).IsTransparent() &&
+									ChunkData->at(x).at(y).at(CHUNK_SIZE_Z - 2).type != block->type)
+								{
+									AddFace(chunk, BlockFace::FRONT, local_position, block->type, false);
+									AddFace(chunk, BlockFace::BACK, local_position, block->type, false);
+								}
+							}
+
+							else
+							{
+								if (ForwardChunkData->at(x).at(y).at(0).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::FRONT, local_position, block->type);
+									AddFace(chunk, BlockFace::BACK, local_position, block->type);
+								}
+
+								else if (ChunkData->at(x).at(y).at(CHUNK_SIZE_Z - 2).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::FRONT, local_position, block->type);
+									AddFace(chunk, BlockFace::BACK, local_position, block->type);
+								}
+							}
+						}
+
+						else
+						{
+							if (block->IsTransparent())
+							{
+								if (ChunkData->at(x).at(y).at(z + 1).IsTransparent() &&
+									ChunkData->at(x).at(y).at(z + 1).type != block->type)
+								{
+									AddFace(chunk, BlockFace::FRONT, local_position, block->type, false);
+								}
+
+								if (ChunkData->at(x).at(y).at(z - 1).IsTransparent() &&
+									ChunkData->at(x).at(y).at(z - 1).type != block->type)
+								{
+									AddFace(chunk, BlockFace::BACK, local_position, block->type, false);
+								}
+							}
+
+							else
+							{
+								//If the forward block is an air block, add the forward face to the mesh
+								if (ChunkData->at(x).at(y).at(z + 1).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::FRONT, local_position, block->type);
+								}
+
+								// If the back (-forward) block is an air block, add the back face to the mesh
+								if (ChunkData->at(x).at(y).at(z - 1).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::BACK, local_position, block->type);
+								}
+							}
+						}
+
+						if (x <= 0)
+						{
+							if (block->IsTransparent())
+							{
+								if (LeftChunkData->at(CHUNK_SIZE_X - 1).at(y).at(z).IsTransparent() &&
+									LeftChunkData->at(CHUNK_SIZE_X - 1).at(y).at(z).type != block->type)
+								{
+									AddFace(chunk, BlockFace::LEFT, local_position, block->type, false);
+									AddFace(chunk, BlockFace::RIGHT, local_position, block->type, false);
+								}
+
+								else if (ChunkData->at(1).at(y).at(z).IsTransparent() &&
+									ChunkData->at(1).at(y).at(z).type != block->type)
+								{
+									AddFace(chunk, BlockFace::RIGHT, local_position, block->type, false);
+									AddFace(chunk, BlockFace::LEFT, local_position, block->type, false);
+								}
+
+							}
+
+							else
+							{
+								if (LeftChunkData->at(CHUNK_SIZE_X - 1).at(y).at(z).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::LEFT, local_position, block->type);
+									AddFace(chunk, BlockFace::RIGHT, local_position, block->type);
+								}
+
+								else if (ChunkData->at(1).at(y).at(z).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::RIGHT, local_position, block->type);
+									AddFace(chunk, BlockFace::LEFT, local_position, block->type);
+								}
+							}
+						}
+
+						else if (x >= CHUNK_SIZE_X - 1)
+						{
+							if (block->IsTransparent())
+							{
+								if (RightChunkData->at(0).at(y).at(z).IsTransparent() &&
+									RightChunkData->at(0).at(y).at(z).type != block->type)
+								{
+									AddFace(chunk, BlockFace::LEFT, local_position, block->type, false);
+									AddFace(chunk, BlockFace::RIGHT, local_position, block->type, false);
+								}
+
+								else if (ChunkData->at(CHUNK_SIZE_X - 2).at(y).at(z).IsTransparent() &&
+									ChunkData->at(CHUNK_SIZE_X - 2).at(y).at(z).type != block->type)
+								{
+									AddFace(chunk, BlockFace::LEFT, local_position, block->type, false);
+									AddFace(chunk, BlockFace::RIGHT, local_position, block->type, false);
+								}
+							}
+
+							else
+							{
+								if (RightChunkData->at(0).at(y).at(z).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::LEFT, local_position, block->type);
+									AddFace(chunk, BlockFace::RIGHT, local_position, block->type);
+								}
+
+								else if (ChunkData->at(CHUNK_SIZE_X - 2).at(y).at(z).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::LEFT, local_position, block->type);
+									AddFace(chunk, BlockFace::RIGHT, local_position, block->type);
+								}
+							}
+
+						}
+
+						else
+						{
+							if (block->IsTransparent())
+							{
+								if (ChunkData->at(x + 1).at(y).at(z).IsTransparent() &&
+									ChunkData->at(x + 1).at(y).at(z).type != block->type)
+								{
+									AddFace(chunk, BlockFace::RIGHT, local_position, block->type, false);
+								}
+
+								if (ChunkData->at(x - 1).at(y).at(z).IsTransparent() &&
+									ChunkData->at(x - 1).at(y).at(z).type != block->type)
+								{
+									AddFace(chunk, BlockFace::LEFT, local_position, block->type, false);
+								}
+							}
+
+							else
+							{
+								// If the next block is an air block, add the right face to the mesh
+								if (ChunkData->at(x + 1).at(y).at(z).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::RIGHT, local_position, block->type);
+								}
+
+								// If the previous block is an air block, add the left face to the mesh
+								if (ChunkData->at(x - 1).at(y).at(z).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::LEFT, local_position, block->type);
+								}
+							}
+						}
+
+						if (y <= 0)
+						{
+							if (ChunkData->at(x).at(y + 1).at(z).IsOpaque() == false)
+							{
+								AddFace(chunk, BlockFace::BOTTOM, local_position, block->type);
+							}
+						}
+
+						else if (y >= CHUNK_SIZE_Y - 1)
+						{
+							AddFace(chunk, BlockFace::TOP, local_position, block->type);
+						}
+
+						else
+						{
+							if (block->IsTransparent())
+							{
+								if (ChunkData->at(x).at(y - 1).at(z).IsTransparent() &&
+									ChunkData->at(x).at(y - 1).at(z).type != block->type)
+								{
+									AddFace(chunk, BlockFace::BOTTOM, local_position, block->type, false);
+								}
+
+								if (ChunkData->at(x).at(y + 1).at(z).IsTransparent() &&
+									ChunkData->at(x).at(y + 1).at(z).type != block->type)
+								{
+									AddFace(chunk, BlockFace::TOP, local_position, block->type, false);
+								}
+							}
+
+							else
+							{
+								// If the top block is an air block, add the top face to the mesh
+								if (ChunkData->at(x).at(y - 1).at(z).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::BOTTOM, local_position, block->type);
+								}
+
+								// If the bottom block is an air block, add the top face to the mesh
+								if (ChunkData->at(x).at(y + 1).at(z).IsOpaque() == false)
+								{
+									AddFace(chunk, BlockFace::TOP, local_position, block->type);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// Upload the data to the GPU whenever the mesh is reconstructed
+
+		
+		return true;
+	}
+
+	//std::cout << "One of chunk dir is nullptr" << std::endl;
+	return false;
+}
+
+void ChunkMesh::BindConstructedMesh()
+{
+	p_VerticesCount = 0;
+
+	if (mVertices.size() > 0)
+	{
+		mVBO.BufferData(this->mVertices.size() * sizeof(Vertex), &this->mVertices.front(), GL_STATIC_DRAW);
+		p_VerticesCount = mVertices.size();
+		mVertices.clear();
+	}
+}
+
 bool ChunkMesh::CreateMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* chunks[4])
 {
 	ChunkDataTypePtr ChunkData = &chunk->pChunkContents;

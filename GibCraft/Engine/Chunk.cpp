@@ -40,9 +40,28 @@ void Chunk::Construct(ChunkDataTypePtr forward, ChunkDataTypePtr back, ChunkData
 	}
 	else
 	{
+		//std::cout << "Chunk is unbuilt" << std::endl;
+		pMeshState = ChunkMeshState::Unbuilt;
+	}
+}
+
+void Chunk::ConstructNoBind(ChunkDataTypePtr forward, ChunkDataTypePtr back, ChunkDataTypePtr left, ChunkDataTypePtr right)
+{
+	if (mChunkMesh.ConstructMeshNoBind(this, pPosition, forward, back, left, right))
+	{
+		pMeshState = ChunkMeshState::NeedsBinding;
+	}
+	else
+	{
 		std::cout << "Chunk is unbuilt" << std::endl;
 		pMeshState = ChunkMeshState::Unbuilt;
 	}
+}
+
+void Chunk::BindChunkMesh()
+{
+	mChunkMesh.BindConstructedMesh();
+	pMeshState = ChunkMeshState::Built;
 }
 
 

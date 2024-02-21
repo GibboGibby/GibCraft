@@ -18,6 +18,8 @@ enum class ChunkMeshState : std::uint8_t
 	Built = 0,
 	Unbuilt,
 	Building,
+	NeedsBuilding,
+	NeedsBinding,
 	Error
 };
 
@@ -37,6 +39,8 @@ public:
 	void SetBlock(BlockType type, const glm::vec3& position);
 	
 	void Construct(ChunkDataTypePtr forward, ChunkDataTypePtr back, ChunkDataTypePtr left, ChunkDataTypePtr right);
+	void ConstructNoBind(ChunkDataTypePtr forward, ChunkDataTypePtr back, ChunkDataTypePtr left, ChunkDataTypePtr right);
+	void BindChunkMesh();
 	void Construct(Chunk* chunks[4]);
 	ChunkMesh* GetChunkMesh();
 
