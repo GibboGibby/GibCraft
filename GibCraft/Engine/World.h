@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <thread>
 #include "WorldGen.h"
+#include <mutex>
 
 /*
 bool TestAABB3DCollision(const glm::vec3& pos_1, const glm::vec3 dim_1, const glm::vec3& pos_2, const glm::vec3& dim_2)
@@ -36,6 +37,7 @@ bool TestAABB3DCollision(const glm::vec3& pos_1, const glm::vec3 dim_1, const gl
 		void UpdatePlayerPosition(glm::vec3 playerPos);
 
 		void RenderWorld(FPSCamera* camera);
+		void RenderWorldThreaded(FPSCamera* camera);
 		void RenderSingleChunk(int x, int y, FPSCamera* camera);
 
 		std::pair<Block*, Chunk*> GetBlockFromPosition(const glm::vec3& pos) noexcept;
@@ -58,12 +60,13 @@ bool TestAABB3DCollision(const glm::vec3& pos_1, const glm::vec3 dim_1, const gl
 		void UpdateFramePause();
 
 		void Raycast(bool place, FPSCamera* camera);
-		void CreateWorldGenThread();
+		void CreateWorldGenThread(FPSCamera* camera);
 	private:
 
+		std::mutex mutex;
 		void GenerateAndBuildMesh(FPSCamera* camera);
 
-		void ThreadedWorldGenAndMeshing();
+		void ThreadedWorldGenAndMeshing(FPSCamera* camera);
 		
 
 		std::unordered_set<Chunk*> toGenerate;

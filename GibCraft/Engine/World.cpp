@@ -27,10 +27,10 @@ World::World() : m_WorldSeed(5213)
 	
 }
 
-void World::CreateWorldGenThread()
+void World::CreateWorldGenThread(FPSCamera* camera)
 {
 	if (thread_started) return;
-	std::thread thr = std::thread(&World::ThreadedWorldGenAndMeshing, this);
+	std::thread thr = std::thread(&World::ThreadedWorldGenAndMeshing, this, std::ref(camera));
 	thr.detach();
 	thread_started = true;
 }
@@ -74,11 +74,12 @@ void World::Update()
 			{
 				Chunk* chunk = EmplaceChunkInMap(i, j);
 				WorldGen::GenerateChunk(chunk, m_WorldSeed);
+				//chunk->pMeshState = ChunkMeshState::NeedsBuilding;
 			}
 			else
 			{
-				//Chunk* chunk = EmplaceChunkInMap(i, j);
-				//loadedChunks.insert(chunk);
+				Chunk* chunk = EmplaceChunkInMap(i, j);
+				loadedChunks.insert(chunk);
 			}
 		}
 	}
@@ -219,33 +220,34 @@ void World::Raycast(bool place, FPSCamera* camera)
 						edit_block.first->type = BlockType::AIR;
 					}
 
-					edit_block.second->pMeshState = ChunkMeshState::Unbuilt;
+					edit_block.second->pMeshState = ChunkMeshState::NeedsBuilding;
 
 					if (local_block_pos.x <= 0)
 					{
 						Chunk* update_chunk = RetrieveChunkFromMap(edit_block.second->pPosition.x - 1, edit_block.second->pPosition.z);
-						update_chunk->pMeshState = ChunkMeshState::Unbuilt;
+						update_chunk->pMeshState = ChunkMeshState::NeedsBuilding;
 					}
 
 					if (local_block_pos.z <= 0)
 					{
 						Chunk* update_chunk = RetrieveChunkFromMap(edit_block.second->pPosition.x, edit_block.second->pPosition.z - 1);
-						update_chunk->pMeshState = ChunkMeshState::Unbuilt;
+						update_chunk->pMeshState = ChunkMeshState::NeedsBuilding;
 					}
 
 					if (local_block_pos.x >= CHUNK_SIZE_X - 1)
 					{
 						Chunk* update_chunk = RetrieveChunkFromMap(edit_block.second->pPosition.x + 1, edit_block.second->pPosition.z);
-						update_chunk->pMeshState = ChunkMeshState::Unbuilt;
+						update_chunk->pMeshState = ChunkMeshState::NeedsBuilding;
 					}
 
 					if (local_block_pos.z >= CHUNK_SIZE_Z - 1)
 					{
 						Chunk* update_chunk = RetrieveChunkFromMap(edit_block.second->pPosition.x, edit_block.second->pPosition.z + 1);
-						update_chunk->pMeshState = ChunkMeshState::Unbuilt;
+						update_chunk->pMeshState = ChunkMeshState::NeedsBuilding;
 					}
 
 					edit_block.second->pChunkState = ChunkState::Changed;
+
 
 				}
 				return;
@@ -275,54 +277,49 @@ void World::GenerateAndBuildMesh(FPSCamera* camera)
 	}
 }
 
-void World::ThreadedWorldGenAndMeshing()
+void World::ThreadedWorldGenAndMeshing(FPSCamera* camera)
 {
 	while (shouldThread)
 	{
-		if (framePause) continue;
-		int player_chunk_x = (int)floor(playerPosition.x / CHUNK_SIZE_X);
-		int player_chunk_z = (int)floor(playerPosition.z / CHUNK_SIZE_Z);
+		glm::vec3 tempPlayerPos = this->playerPosition;
+		std::cout << "This is the player x - " << tempPlayerPos.x << " and the player z - " << tempPlayerPos.z << std::endl;
+
+		int player_chunk_x = 0;
+		int player_chunk_z = 0;
 
 		int build_distance = render_distance + 4;
-		std::vector<Chunk*> toRemoveGen;
-		std::vector<Chunk*> toRemoveMesh;
-		std::vector<Chunk*> toRemoveRender;
-		if (toGenerate.size() > 0)
+
+		player_chunk_x = (int)floor(tempPlayerPos.x / CHUNK_SIZE_X);
+		player_chunk_z = (int)floor(tempPlayerPos.z / CHUNK_SIZE_Z);
+
+
+		for (int i = player_chunk_x - build_distance; i < player_chunk_x + build_distance; i++)
 		{
-			for (Chunk* chunk : toGenerate)
+			for (int j = player_chunk_z - build_distance; j < player_chunk_z + build_distance; j++)
 			{
-				BlockType type = (static_cast<int>(chunk->pPosition.x) % 2 == 0 && static_cast<int>(chunk->pPosition.z) % 2 == 0) ? BlockType::OAK_PLANKS : BlockType::COBBLESTONE;
-				for (int x = 0; x < CHUNK_SIZE_X; x++)
+				if (!ChunkExistsInMap(i, j))
 				{
-					for (int y = 0; y < CHUNK_SIZE_Y; y++)
+					//mutex.lock();
+					Chunk* chunk = this->EmplaceChunkInMap(i, j);
+					WorldGen::GenerateChunk(chunk, m_WorldSeed);
+					//mutex.unlock();
+				}
+				else
+				{
+					//mutex.lock();
+					Chunk* chunk = this->EmplaceChunkInMap(i, j);
+					if (chunk == nullptr) continue;
+					//this->loadedChunks.insert(chunk);
+					//mutex.unlock();
+					if (i > player_chunk_x - render_distance && i < player_chunk_x + render_distance)
 					{
-						for (int z = 0; z < CHUNK_SIZE_Z; z++)
-						{
-							if (y < 128)
-								chunk->SetBlock(type, glm::vec3(x, y, z));
-							else
-								chunk->SetBlock(BlockType::AIR, glm::vec3(x, y, z));
-						}
+						if (chunk->pMeshState == ChunkMeshState::Unbuilt)
+							chunk->ConstructNoBind(GetChunkDataForMeshing(i, j + 1), GetChunkDataForMeshing(i, j - 1), GetChunkDataForMeshing(i + 1, j), GetChunkDataForMeshing(i - 1, j));
+
 					}
 				}
-				chunk->pChunkState = ChunkState::Generated;
-				toRemoveGen.push_back(chunk);
 			}
 		}
-		if (toMesh.size() > 0)
-		{
-			for (Chunk* chunk : toMesh)
-			{
-				int i = static_cast<int>(chunk->pPosition.x);
-				int j = static_cast<int>(chunk->pPosition.z);
-				chunk->Construct(GetChunkDataForMeshing(i, j + 1), GetChunkDataForMeshing(i, j - 1), GetChunkDataForMeshing(i - 1, j), GetChunkDataForMeshing(i + 1, j));
-				if (chunk->pMeshState == ChunkMeshState::Built) toRemoveMesh.push_back(chunk);
-
-			}
-		}
-
-
-		
 
 		std::vector<Chunk*> toRemove;
 		if (loadedChunks.size() > 0)
@@ -340,27 +337,15 @@ void World::ThreadedWorldGenAndMeshing()
 				}
 			}
 		}
-		
+
 
 		for (int i = 0; i < toRemove.size(); i++)
 		{
 			RemoveChunkInMap(static_cast<int>(toRemove[i]->pPosition.x), static_cast<int>(toRemove[i]->pPosition.z));
 			loadedChunks.erase(toRemove[i]);
 		}
-
-		for (int i = 0; i < toRemoveGen.size(); i++)
-		{
-			toGenerate.erase(toRemoveGen[i]);
-		}
-
-		for (int i = 0; i < toRemoveMesh.size(); i++)
-		{
-			toMesh.erase(toRemoveMesh[i]);
-		}
-
-
-		//framePause = true;
 	}
+	
 }
 
 void World::UpdatePlayerPosition(glm::vec3 playerPos)
@@ -405,6 +390,7 @@ void World::RenderWorld(FPSCamera* camera)
 	{
 		for (int j = player_chunk_z - render_distance; j < player_chunk_z + render_distance; j++)
 		{
+			//mutex.lock();
 			Chunk* chunk = RetrieveChunkFromMap(i, j);
 			//if (BoxInFrustum())
 
@@ -420,6 +406,58 @@ void World::RenderWorld(FPSCamera* camera)
 		}
 	}
 	renderer.EndChunkRendering();	
+}
+
+void World::RenderWorldThreaded(FPSCamera* camera)
+{
+	int player_chunk_x = 0;
+	int player_chunk_z = 0;
+
+	//Render Skybox
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CCW);
+
+	player_chunk_x = (int)floor(camera->GetPosition().x / CHUNK_SIZE_X);
+	player_chunk_z = (int)floor(camera->GetPosition().z / CHUNK_SIZE_Z);
+
+	//std::cout << "player chunk x - " << player_chunk_x << "and z - " << player_chunk_z << std::endl;
+
+	renderer.StartChunkRendering(camera, render_distance);
+
+	//std::cout << "X range of - " << player_chunk_x - render_distance << " to " << player_chunk_x + render_distance << std::endl;
+
+	for (int i = player_chunk_x - render_distance; i < player_chunk_x + render_distance; i++)
+	{
+		for (int j = player_chunk_z - render_distance; j < player_chunk_z + render_distance; j++)
+		{
+			
+			Chunk* chunk = RetrieveChunkFromMap(i, j);
+			if (chunk == nullptr) continue;
+			//if (BoxInFrustum())
+
+			if (chunk->pMeshState == ChunkMeshState::NeedsBuilding)
+			{
+				chunk->Construct(GetChunkDataForMeshing(i, j + 1), GetChunkDataForMeshing(i, j - 1), GetChunkDataForMeshing(i + 1, j), GetChunkDataForMeshing(i - 1, j));
+
+			}
+
+			if (chunk->pMeshState == ChunkMeshState::NeedsBinding)
+			{
+				chunk->BindChunkMesh();
+				//toMesh.insert(chunk);
+				//chunk->pMeshState = ChunkMeshState::Building;
+			}
+
+			if (chunk->pMeshState == ChunkMeshState::Built)
+				renderer.RenderChunk(chunk);
+		}
+	}
+	renderer.EndChunkRendering();
 }
 
 void World::RenderSingleChunk(int x, int y, FPSCamera* camera)

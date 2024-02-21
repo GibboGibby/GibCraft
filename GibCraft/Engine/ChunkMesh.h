@@ -27,6 +27,9 @@ public:
 	bool CreateMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* chunks[4]);
 
 	bool ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr forwardChunk, ChunkDataTypePtr backChunk, ChunkDataTypePtr leftChunk, ChunkDataTypePtr rightChunk);
+	bool ConstructMeshNoBind(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr forwardChunk, ChunkDataTypePtr backChunk, ChunkDataTypePtr leftChunk, ChunkDataTypePtr rightChunk);
+
+	void BindConstructedMesh();
 
 	//void AddCube();
 

@@ -321,7 +321,7 @@ int main()
 	World world(1254125, glm::vec2(0,0), "Gaming");
 	world.UpdatePlayerPosition(camera->GetPosition());
 	world.Update();
-	//world.CreateWorldGenThread();
+	world.CreateWorldGenThread(camera);
 	glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//world.Init();
 	
@@ -427,11 +427,8 @@ int main()
 
 		
 		
-		world.Update();
-		//world.RenderSingleChunk(0, 0, camera);
-		//world.RenderSingleChunk(1, 0, camera);
-		//world.RenderSingleChunk(0, 1, camera);
-		world.RenderWorld(camera);
+		//world.Update();
+		world.RenderWorldThreaded(camera);
 
 		world.UpdateFramePause();
 
