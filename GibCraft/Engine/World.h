@@ -67,7 +67,7 @@ bool TestAABB3DCollision(const glm::vec3& pos_1, const glm::vec3 dim_1, const gl
 
 		void UpdateFramePause();
 
-		void Raycast(bool place, FPSCamera* camera);
+		void Raycast(bool place, std::shared_ptr<FPSCamera> camera);
 		void CreateWorldGenThread(FPSCamera* camera);
 		std::shared_ptr<std::map<std::pair<int, int>, std::shared_ptr<Chunk>>> m_WorldChunks = std::make_shared<std::map<std::pair<int, int>, std::shared_ptr<Chunk>>>();
 	private:

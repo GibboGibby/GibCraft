@@ -14,6 +14,7 @@
 #include "Engine/TesselatedPlane.h"
 #include "Engine/MeshThread.h"
 #include "Engine/GenThread.h"
+#include<iomanip>
 
 //#include "Engine/CubeRenderer.h"
 #include "Engine/Renderer.h"
@@ -185,7 +186,7 @@ int main()
 	glm::mat4 viewMatrix = glm::lookAt(oldcamera.pos, center, up);
 
 	
-
+	float maxFPS = 1.0f / 144.0f;
 	
 	Shader shaderProgram("shaders/vertex/default.vert", "shaders/fragment/default.frag");
 	Shader newShaderProgram("shaders/vertex/basic.vert", "shaders/fragment/basic.frag");
@@ -336,10 +337,16 @@ int main()
 	glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//world.Init();
 	
+	std::chrono::high_resolution_clock::time_point lastFrameFinish = std::chrono::high_resolution_clock::now();
 	
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
-
+		std::chrono::high_resolution_clock::time_point frameStartTime = std::chrono::high_resolution_clock::now();
+		//int milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(frameStartTime - lastFrameFinish).count();
+		//std::cout << "milliseconds number - " << milliseconds << std::endl;
+		//float deltaTime = (float)milliseconds / 1000.0f;
+		float deltaTime = std::chrono::duration<float>(frameStartTime - lastFrameFinish).count();
+		std::cout << "deltaTime - " << deltaTime << std::endl;
 		if (Input::GetKeyDown(GLFW_KEY_F1))
 		{
 			fullscreen = !fullscreen;
@@ -351,34 +358,34 @@ int main()
 			window.Close();
 			return -1;
 		}
-		float moveSpeed = 1.0f;
+		float moveSpeed = 4.0f;
 		if (Input::GetKey(GLFW_KEY_A))
 		{
 			//camera->SetPosition(camera->GetPosition() + (camera->GetFront() * (glm::vec3(-1.0f, 0.0f, 0.0f) * -moveSpeed)));
-			camera->SetPosition(camera->GetPosition() + (camera->GetRight() * -moveSpeed));
+			camera->SetPosition(camera->GetPosition() + (camera->GetRight() * -moveSpeed * deltaTime));
 		}
 
 		if (Input::GetKey(GLFW_KEY_D))
 		{
-			camera->SetPosition(camera->GetPosition() + (camera->GetRight() * moveSpeed));
+			camera->SetPosition(camera->GetPosition() + (camera->GetRight() * moveSpeed * deltaTime));
 		}
 
 		if (Input::GetKey(GLFW_KEY_W))
 		{
-			camera->SetPosition(camera->GetPosition() + (camera->GetFront() * moveSpeed));
+			camera->SetPosition(camera->GetPosition() + (camera->GetFront() * moveSpeed * deltaTime));
 		}
 		if (Input::GetKey(GLFW_KEY_S))
 		{
-			camera->SetPosition(camera->GetPosition() + (camera->GetFront() * -moveSpeed));
+			camera->SetPosition(camera->GetPosition() + (camera->GetFront() * -moveSpeed * deltaTime));
 		}
 
 		if (Input::GetKey(GLFW_KEY_Q))
 		{
-			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed * 0.3f));
+			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed * deltaTime));
 		}
 		if (Input::GetKey(GLFW_KEY_E))
 		{
-			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed *0.3f));
+			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed * deltaTime));
 		}
 
 
@@ -431,12 +438,12 @@ int main()
 		world.UpdatePlayerPosition(camera->GetPosition());
 		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_1))
 		{
-			//world.Raycast(false, camera);
+			world.Raycast(false, camera);
 		}
 
 		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_2))
 		{
-			//world.Raycast(true, camera);
+			world.Raycast(true, camera);
 		}
 
 		
@@ -463,6 +470,14 @@ int main()
 		inputMan->UpdatePrevInput();
 		inputMan->UpdateMouse(window.GetWindow());
 		glfwPollEvents();
+		lastFrameFinish = std::chrono::high_resolution_clock::now();
+		auto fpsMax = std::chrono::duration<float>(maxFPS);
+		auto miliseconds = std::chrono::duration<float>(lastFrameFinish - frameStartTime);
+		//float miliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(lastFrameFinish - frameStartTime).count() / 1000.0f;
+		if (miliseconds.count() < maxFPS)
+		{
+			std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::milliseconds>(fpsMax - miliseconds));
+		}
 	}
 
 	VAO1.Delete();

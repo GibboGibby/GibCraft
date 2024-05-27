@@ -231,7 +231,7 @@ bool World::TestRayPlayerCollision(const glm::vec3& ray_block, glm::vec3 pos)
 	return false;
 }
 
-void World::Raycast(bool place, FPSCamera* camera)
+void World::Raycast(bool place, std::shared_ptr<FPSCamera> camera)
 {
 	glm::vec3 position = camera->GetPosition();
 	const glm::vec3& direction = camera->GetFront();
@@ -307,9 +307,9 @@ void World::Raycast(bool place, FPSCamera* camera)
 
 						if (local_block_pos.y >= 0 && local_block_pos.y < CHUNK_SIZE_Y - 1)
 						{
-							if (edit_block.second->pChunkContents.at(local_block_pos.x).at(local_block_pos.y + 1).at(local_block_pos.z).DependsOnBelowBlock())
+							if (edit_block.second->pChunkContentsPtr->at(local_block_pos.x).at(local_block_pos.y + 1).at(local_block_pos.z).DependsOnBelowBlock())
 							{
-								edit_block.second->pChunkContents.at(local_block_pos.x).at(local_block_pos.y + 1).at(local_block_pos.z).type = BlockType::AIR;
+								edit_block.second->pChunkContentsPtr->at(local_block_pos.x).at(local_block_pos.y + 1).at(local_block_pos.z).type = BlockType::AIR;
 							}
 						}
 
@@ -342,7 +342,7 @@ void World::Raycast(bool place, FPSCamera* camera)
 						update_chunk->pMeshState = ChunkMeshState::NeedsBuilding;
 					}
 
-					edit_block.second->pChunkState = ChunkState::Changed;
+					//edit_block.second->pChunkState = ChunkState::Changed;
 
 
 				}
@@ -508,6 +508,14 @@ void World::RenderWorld(std::shared_ptr<FPSCamera> camera)
 				chunk->BindChunkMesh();
 			}
 
+			if (chunk->pMeshState == ChunkMeshState::NeedsBuilding)
+			{
+				chunk->ConstructNoBind(chunk, GetChunkDataForMeshing(i, j + 1), GetChunkDataForMeshing(i, j - 1), GetChunkDataForMeshing(i + 1, j), GetChunkDataForMeshing(i - 1, j));
+				chunk->BindChunkMesh();
+				//chunk->pChunkState = ChunkState::Generated;
+				chunk->pMeshState = ChunkMeshState::Built;
+			}
+
 			if (chunk->pMeshState == ChunkMeshState::Built)
 				renderer.RenderChunk(chunk);
 		}
@@ -607,7 +615,7 @@ std::pair<Block*, std::shared_ptr<Chunk>> World::GetBlockFromPosition(const glm:
 
 	std::shared_ptr<Chunk> chunk = RetrieveChunkFromMap(block_chunk_x, block_chunk_z);
 
-	return { &chunk->pChunkContents.at(bx).at(by).at(bz), chunk };
+	return { &chunk->pChunkContentsPtr->at(bx).at(by).at(bz), chunk };
 }
 
 BlockType World::GetBlockTypeFromPosition(const glm::vec3& pos) noexcept
