@@ -5,7 +5,7 @@ Renderer::Renderer() : mDefaultChunkShader("shaders/vertex/BlockRenderer.vert", 
 	mBlockAtlas.CreateTexture("resources\\textures\\atlas.png");
 }
 
-void Renderer::RenderChunk(Chunk* chunk)
+void Renderer::RenderChunk(std::shared_ptr<Chunk> chunk)
 {
 	if (chunk->GetChunkMesh()->p_VerticesCount > 0)
 	{
@@ -18,7 +18,7 @@ void Renderer::RenderChunk(Chunk* chunk)
 	}
 }
 
-void Renderer::StartChunkRendering(FPSCamera* camera, int render_distance)
+void Renderer::StartChunkRendering(std::shared_ptr<FPSCamera> camera, int render_distance)
 {
 	
 	mDefaultChunkShader.Activate();

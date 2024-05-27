@@ -12,6 +12,8 @@
 #include <glm/ext.hpp>
 #include "Engine/Cube.h"
 #include "Engine/TesselatedPlane.h"
+#include "Engine/MeshThread.h"
+#include "Engine/GenThread.h"
 
 //#include "Engine/CubeRenderer.h"
 #include "Engine/Renderer.h"
@@ -314,14 +316,21 @@ int main()
 	float windowAspect = ((float)window.Width() / (float)window.Height());
 
 	Renderer* renderer = new Renderer();
-	FPSCamera* camera = new FPSCamera(fov, windowAspect, near, far, 0.25f);
+	std::shared_ptr<FPSCamera> camera = std::make_shared<FPSCamera>(fov, windowAspect, near, far, 0.25f);
 
 	inputMan->ResetMousePositionDelta(window.GetWindow());
 	
 	World world(1254125, glm::vec2(0,0), "Gaming");
 	world.UpdatePlayerPosition(camera->GetPosition());
-	world.Update();
+
+	camera->SetPosition(glm::vec3(0.0f, 120.0f, 0.0f));
+
+
+	world.InitWorld();
 	//world.CreateWorldGenThread(camera);
+	GenThread* genThread = new GenThread(world.m_WorldChunks, camera, 1254125, 10, 14);
+	MeshThread* meshThread = new MeshThread(world.m_WorldChunks, camera, 1254125, 10, 14);
+
 	glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//world.Init();
 	
@@ -400,7 +409,7 @@ int main()
 
 		if (Input::GetKeyDown(GLFW_KEY_P))
 		{
-			Chunk* thing = world.RetrieveChunkFromMap(0,0);
+			std::shared_ptr<Chunk> thing = world.RetrieveChunkFromMap(0,0);
 			for (int x = 0; x < CHUNK_SIZE_X; x++)
 			{ 
 				for (int y = 0; y < CHUNK_SIZE_Y; y++)
@@ -414,20 +423,22 @@ int main()
 			}
 		}
 		camera->Refresh();
+		
 		world.UpdatePlayerPosition(camera->GetPosition());
 		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_1))
 		{
-			world.Raycast(false, camera);
+			//world.Raycast(false, camera);
 		}
 
 		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_2))
 		{
-			world.Raycast(true, camera);
+			//world.Raycast(true, camera);
 		}
 
 		
-		
-		world.Update();
+		//world.UpdateAddToChunks();
+		//world.Update();
+		world.UpdateViewFrustum(camera);
 		world.RenderWorld(camera);
 
 		world.UpdateFramePause();
@@ -455,8 +466,9 @@ int main()
 	//EBO1.Delete();
 	shaderProgram.Delete();
 
-
+	
 	Input::Release();
 	glfwDestroyWindow(window.GetWindow());
 	glfwTerminate();
+
 }

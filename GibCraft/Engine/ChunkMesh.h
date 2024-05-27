@@ -13,6 +13,7 @@
 
 class Chunk;
 typedef std::array<std::array<std::array<Block, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>* ChunkDataTypePtr;
+typedef std::shared_ptr<std::array<std::array<std::array<Block, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>> ChunkDataSharedPtr;
 ChunkDataTypePtr _GetChunkDataForMeshing(int cx, int cz);
 
 class ChunkMesh
@@ -24,16 +25,16 @@ private:
 public:
 	ChunkMesh();
 
-	bool CreateMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* chunks[4]);
+	bool CreateMesh(std::shared_ptr<Chunk> chunk, const glm::vec3& chunk_pos, std::shared_ptr<Chunk> chunks[4]);
 
-	bool ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr forwardChunk, ChunkDataTypePtr backChunk, ChunkDataTypePtr leftChunk, ChunkDataTypePtr rightChunk);
-	bool ConstructMeshNoBind(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr forwardChunk, ChunkDataTypePtr backChunk, ChunkDataTypePtr leftChunk, ChunkDataTypePtr rightChunk);
+	bool ConstructMesh(std::shared_ptr<Chunk> chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr forwardChunk, ChunkDataTypePtr backChunk, ChunkDataTypePtr leftChunk, ChunkDataTypePtr rightChunk);
+	bool ConstructMeshNoBind(std::shared_ptr<Chunk> chunk, const glm::vec3& chunk_pos, ChunkDataSharedPtr forwardChunk, ChunkDataSharedPtr backChunk, ChunkDataSharedPtr leftChunk, ChunkDataSharedPtr rightChunk);
 
 	void BindConstructedMesh();
 
 	//void AddCube();
 
-	void AddFace(Chunk* chunk, BlockFace face, const glm::vec3& position, BlockType type, bool buffer = true);
+	void AddFace(std::shared_ptr<Chunk> chunk, BlockFace face, const glm::vec3& position, BlockType type, bool buffer = true);
 	VertexArray pVAO;
 	std::uint32_t p_VerticesCount;
 

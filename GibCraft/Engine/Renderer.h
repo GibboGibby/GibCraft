@@ -12,8 +12,8 @@ class Renderer
 public:
 	Renderer();
 
-	void StartChunkRendering(FPSCamera* camera, int render_distacne);
-	void RenderChunk(Chunk* chunk);
+	void StartChunkRendering(std::shared_ptr<FPSCamera> camera, int render_distacne);
+	void RenderChunk(std::shared_ptr<Chunk> chunk);
 	void EndChunkRendering();
 
 	Texture* GetAtlasTexture() { return &mBlockAtlas; }

@@ -80,7 +80,7 @@ ChunkMesh::ChunkMesh() : mVBO(GL_ARRAY_BUFFER)
 	m_RightFace[3] = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
 }
 
-bool ChunkMesh::ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr ForwardChunkData, ChunkDataTypePtr BackwardChunkData, ChunkDataTypePtr RightChunkData, ChunkDataTypePtr LeftChunkData)
+bool ChunkMesh::ConstructMesh(std::shared_ptr<Chunk> chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr ForwardChunkData, ChunkDataTypePtr BackwardChunkData, ChunkDataTypePtr RightChunkData, ChunkDataTypePtr LeftChunkData)
 {
 	ChunkDataTypePtr ChunkData = &chunk->pChunkContents;
 
@@ -92,6 +92,7 @@ bool ChunkMesh::ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDat
 
 	if (ForwardChunkData && BackwardChunkData && RightChunkData && LeftChunkData)
 	{
+		
 		for (int x = 0; x < CHUNK_SIZE_X; x++)
 		{
 			for (int y = 0; y < CHUNK_SIZE_Y; y++)
@@ -385,18 +386,22 @@ bool ChunkMesh::ConstructMesh(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDat
 	return false;
 }
 
-bool ChunkMesh::ConstructMeshNoBind(Chunk* chunk, const glm::vec3& chunk_pos, ChunkDataTypePtr ForwardChunkData, ChunkDataTypePtr BackwardChunkData, ChunkDataTypePtr RightChunkData, ChunkDataTypePtr LeftChunkData)
+bool ChunkMesh::ConstructMeshNoBind(std::shared_ptr<Chunk> chunk, const glm::vec3& chunk_pos, ChunkDataSharedPtr ForwardChunkData, ChunkDataSharedPtr BackwardChunkData, ChunkDataSharedPtr RightChunkData, ChunkDataSharedPtr LeftChunkData)
 {
-	ChunkDataTypePtr ChunkData = &chunk->pChunkContents;
+	ChunkDataSharedPtr ChunkData = chunk->pChunkContentsPtr;
 
 	glm::vec3 world_position;
 	glm::vec3 local_position;
 	mVertices.clear();
 
 
-
+	//if (!ForwardChunkData) std::cout << "foward bad" << std::endl;
+	//if (!BackwardChunkData) std::cout << "backward bad" << std::endl;
+	//if (!RightChunkData) std::cout << "right bad" << std::endl;
+	//if (!LeftChunkData) std::cout << "left bad" << std::endl;
 	if (ForwardChunkData && BackwardChunkData && RightChunkData && LeftChunkData)
 	{
+		std::cout << "chunk mesh has in fact been generated" << std::endl;
 		for (int x = 0; x < CHUNK_SIZE_X; x++)
 		{
 			for (int y = 0; y < CHUNK_SIZE_Y; y++)
@@ -695,17 +700,17 @@ void ChunkMesh::BindConstructedMesh()
 	}
 }
 
-bool ChunkMesh::CreateMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* chunks[4])
+bool ChunkMesh::CreateMesh(std::shared_ptr<Chunk> chunk, const glm::vec3& chunk_pos, std::shared_ptr<Chunk> chunks[4])
 {
 	ChunkDataTypePtr ChunkData = &chunk->pChunkContents;
 	glm::vec3 worldPos;
 	glm::vec3 localPos;
 	mVertices.clear();
 	int numVertexes = 0;
-	Chunk* forwardChunk = chunks[0];
-	Chunk* backwardChunk = chunks[1];
-	Chunk* leftChunk = chunks[2];
-	Chunk* rightChunk = chunks[3];
+	std::shared_ptr<Chunk> forwardChunk = chunks[0];
+	std::shared_ptr<Chunk> backwardChunk = chunks[1];
+	std::shared_ptr<Chunk> leftChunk = chunks[2];
+	std::shared_ptr<Chunk> rightChunk = chunks[3];
 
 	ChunkDataTypePtr ForwardChunkData = &forwardChunk->pChunkContents;
 	ChunkDataTypePtr BackwardChunkData = &backwardChunk->pChunkContents;
@@ -1011,7 +1016,7 @@ bool ChunkMesh::CreateMesh(Chunk* chunk, const glm::vec3& chunk_pos, Chunk* chun
 	return true;
 }
 
-void ChunkMesh::AddFace(Chunk* chunk, BlockFace face, const glm::vec3& position, BlockType type, bool buffer)
+void ChunkMesh::AddFace(std::shared_ptr<Chunk> chunk, BlockFace face, const glm::vec3& position, BlockType type, bool buffer)
 {
 	glm::vec4 translation = glm::vec4(position, 0.0f);
 	Vertex v1, v2, v3, v4;

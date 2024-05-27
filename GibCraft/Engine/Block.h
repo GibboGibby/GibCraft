@@ -23,6 +23,8 @@ enum BlockFace
 
 struct Block
 {
+
+	Block() = default;
 	BlockType type = BlockType::UNKNOWN;
 
 	bool IsModel() const
