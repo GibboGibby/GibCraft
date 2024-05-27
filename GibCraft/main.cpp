@@ -324,6 +324,8 @@ int main()
 	world.UpdatePlayerPosition(camera->GetPosition());
 
 	camera->SetPosition(glm::vec3(0.0f, 120.0f, 0.0f));
+	std::cout << "size of block in bytes - " << sizeof(Block) << std::endl;
+	std::cout << "size of blocktype in bytes - " << sizeof(BlockType) << std::endl;
 
 
 	world.InitWorld();
@@ -382,7 +384,8 @@ int main()
 
 		//shaderProgram.Activate();
 		glm::vec2 mousePosDelta = Input::MousePositionDelta();
-		//std::cout << "This is the mouse delta: x - " << mousePosDelta.x << "   y - " << mousePosDelta.y << std::endl;
+		//
+		//  << "This is the mouse delta: x - " << mousePosDelta.x << "   y - " << mousePosDelta.y << std::endl;
 		camera->UpdateOnMouseMovement(Input::mousePosition.x, Input::mousePosition.y);
 
 
@@ -406,6 +409,7 @@ int main()
 		if (chunk->pMeshState == ChunkMeshState::Unbuilt)
 			chunk->Construct(chunkForward, chunkBack, chunkLeft, chunkRight);
 		*/
+
 
 		if (Input::GetKeyDown(GLFW_KEY_P))
 		{
@@ -436,7 +440,7 @@ int main()
 		}
 
 		
-		//world.UpdateAddToChunks();
+		world.UpdateAddToChunks();
 		//world.Update();
 		world.UpdateViewFrustum(camera);
 		world.RenderWorld(camera);

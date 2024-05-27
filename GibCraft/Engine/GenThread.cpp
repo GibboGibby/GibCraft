@@ -48,7 +48,7 @@ std::shared_ptr<Chunk> GenThread::RetrieveChunkFromMap(std::shared_ptr<std::map<
 
 	if (chunk == worldChunks->end())
 	{
-		std::cout << "Failed to find chunk in world data - gen thread version" << std::endl;
+		//std::cout << "Failed to find chunk in world data - gen thread version" << std::endl;
 		return nullptr;
 	}
 
@@ -108,11 +108,11 @@ void GenThread::ThreadFunc(std::shared_ptr<std::map<std::pair<int, int>, std::sh
 				{
 					//std::cout << "Chunk not found so I am generating a chunk" << std::endl;
 					//World::worldMutex.lock();
-					std::shared_ptr<Chunk> chunk = EmplaceChunkInMap(worldChunks, i, j);
+					//std::shared_ptr<Chunk> chunk = EmplaceChunkInMap(worldChunks, i, j);
 					//chunk->chunkMutex.lock();
-					WorldGen::GenerateChunk(chunk, worldSeed);
+					//WorldGen::GenerateChunk(chunk, worldSeed);
 					//chunk->DisplayTopLayerOfChunk();
-					chunk->pChunkState = ChunkState::Generated;
+					//chunk->pChunkState = ChunkState::Generated;
 					//chunk->chunkMutex.unlock();
 					//World::worldMutex.unlock();
 				}
@@ -126,6 +126,16 @@ void GenThread::ThreadFunc(std::shared_ptr<std::map<std::pair<int, int>, std::sh
 						//World::worldMutex.lock();
 						//std::shared_ptr<Chunk> chunk = EmplaceChunkInMap(worldChunks, i, j);
 						//chunk->chunkMutex.lock();
+						for (int x = 0; x < CHUNK_SIZE_X; x++)
+						{
+							for (int y = 0; y < CHUNK_SIZE_Y; y++)
+							{
+								for (int z = 0; z < CHUNK_SIZE_Z; z++)
+								{
+									chunk->SetBlock(BlockType::AIR, glm::vec3(x, y, z));
+								}
+							}
+						}
 						WorldGen::GenerateChunk(chunk, worldSeed);
 						chunk->pChunkState = ChunkState::Generated;
 						//chunk->chunkMutex.unlock();
@@ -135,7 +145,7 @@ void GenThread::ThreadFunc(std::shared_ptr<std::map<std::pair<int, int>, std::sh
 				World::worldMutex.unlock();
 			}
 		}
-		std::cout << "Full Gen Thread Run Complete" << std::endl;
+		//std::cout << "Full Gen Thread Run Complete" << std::endl;
 		std::this_thread::sleep_for(16ms);
 	}
 }

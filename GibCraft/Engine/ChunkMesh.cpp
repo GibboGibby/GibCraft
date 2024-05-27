@@ -401,7 +401,8 @@ bool ChunkMesh::ConstructMeshNoBind(std::shared_ptr<Chunk> chunk, const glm::vec
 	//if (!LeftChunkData) std::cout << "left bad" << std::endl;
 	if (ForwardChunkData && BackwardChunkData && RightChunkData && LeftChunkData)
 	{
-		std::cout << "chunk mesh has in fact been generated" << std::endl;
+		//
+		//  << "chunk mesh has in fact been generated" << std::endl;
 		for (int x = 0; x < CHUNK_SIZE_X; x++)
 		{
 			for (int y = 0; y < CHUNK_SIZE_Y; y++)

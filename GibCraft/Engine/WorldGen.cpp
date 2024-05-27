@@ -6,7 +6,9 @@ static FastNoise BiomeGenerator(8213);
 void SetVerticalBlocks(std::shared_ptr<Chunk> chunk, int x, int z, int y_level, float real_x, float real_z)
 {
     BiomeGenerator.SetNoiseType(FastNoise::Simplex);
-    //std::cout << "y level for chunk is - " << y_level << std::endl;
+    //
+    // 
+    //  << "y level for chunk is - " << y_level << std::endl;
 
     for (int i = 0; i < y_level; i++)
     {

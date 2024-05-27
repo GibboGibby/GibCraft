@@ -4,10 +4,12 @@ Chunk::Chunk(const glm::vec3 chunkPos) : pPosition(chunkPos), pMeshState(ChunkMe
 
 {
 	//memset(&pChunkContents, BlockType::AIR, CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z);
-	//std::fill(std::begin(pChunkContents, std::end(pChunkContents)), BlockType::AIR);
 	//std::fill_n(&pChunkContents[0][0][0], CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z, BlockType::AIR);
-	mChunkMesh = std::make_shared<ChunkMesh>();
+	auto start = std::chrono::system_clock::now();
 	pChunkContentsPtr = std::make_shared<std::array<std::array<std::array<Block, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>>();
+	//std::fill(pChunkContentsPtr->begin(), pChunkContentsPtr->end(), BlockType::AIR);
+	mChunkMesh = std::make_shared<ChunkMesh>();
+	/*
 	for (int x = 0; x < CHUNK_SIZE_X; x++)
 	{
 		for (int y = 0; y < CHUNK_SIZE_Y; y++)
@@ -18,8 +20,11 @@ Chunk::Chunk(const glm::vec3 chunkPos) : pPosition(chunkPos), pMeshState(ChunkMe
 			}
 		}
 	}
+	*/
 	memset(&p_HeightMap, 0, CHUNK_SIZE_X * CHUNK_SIZE_Z * sizeof(std::uint8_t));
 	//pChunkState == ChunkState::Ungenerated;
+	auto end = std::chrono::system_clock::now();
+	std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " - Time it took for a single chunk to be initialised" << std::endl;
 }
 
 Chunk::~Chunk()
@@ -44,7 +49,8 @@ void Chunk::Construct(std::shared_ptr<Chunk> chunk, ChunkDataTypePtr forward, Ch
 	}
 	else
 	{
-		//std::cout << "Chunk is unbuilt" << std::endl;
+		//
+		//  << "Chunk is unbuilt" << std::endl;
 		pMeshState = ChunkMeshState::Unbuilt;
 	}
 }
@@ -58,7 +64,7 @@ void Chunk::ConstructNoBind(std::shared_ptr<Chunk> chunk, ChunkDataSharedPtr for
 	}
 	else
 	{
-		std::cout << "Chunk is unbuilt - Chunk" << std::endl;
+		//std::cout << "Chunk is unbuilt - Chunk" << std::endl;
 		//chunk->pMeshState = ChunkMeshState::Unbuilt;
 	}
 	chunk->chunkMutex.unlock();

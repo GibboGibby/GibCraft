@@ -1,6 +1,6 @@
 #pragma once
 
-enum BlockType
+enum BlockType : char
 {
 	AIR,
 	OAK_PLANKS,
@@ -11,7 +11,7 @@ enum BlockType
 	UNKNOWN
 };
 
-enum BlockFace
+enum BlockFace : char
 {
 	TOP,
 	LEFT,

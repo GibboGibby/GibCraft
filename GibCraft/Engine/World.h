@@ -92,7 +92,7 @@ bool TestAABB3DCollision(const glm::vec3& pos_1, const glm::vec3 dim_1, const gl
 		bool TestRayPlayerCollision(const glm::vec3& ray_block, glm::vec3 pos);
 		std::unordered_set<std::shared_ptr<Chunk>> loadedChunks;
 
-		int render_distance = 10;
+		int render_distance = 6;
 		bool thread_started = false;
 
 		bool framePause = false;

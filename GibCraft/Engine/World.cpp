@@ -60,6 +60,7 @@ void World::Init()
 
 void World::UpdateAddToChunks()
 {
+	auto start = std::chrono::system_clock::now();
 	int player_chunk_x = (int)floor(playerPosition.x / CHUNK_SIZE_X);
 	int player_chunk_z = (int)floor(playerPosition.z / CHUNK_SIZE_Z);
 
@@ -85,11 +86,15 @@ void World::UpdateAddToChunks()
 			}
 		}
 	}
+	auto end = std::chrono::system_clock::now();
+	std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " - Time taken to add all the new chunks" << std::endl;
 }
 
 
 void World::InitWorld()
 {
+	auto start = std::chrono::system_clock::now();
+
 	int player_chunk_x = (int)floor(playerPosition.x / CHUNK_SIZE_X);
 	int player_chunk_z = (int)floor(playerPosition.z / CHUNK_SIZE_Z);
 
@@ -104,6 +109,16 @@ void World::InitWorld()
 			if (!ChunkExistsInMap(i, j))
 			{
 				std::shared_ptr<Chunk> chunk = EmplaceChunkInMap(i, j);
+				for (int x = 0; x < CHUNK_SIZE_X; x++)
+				{
+					for (int y = 0; y < CHUNK_SIZE_Y; y++)
+					{
+						for (int z = 0; z < CHUNK_SIZE_Z; z++)
+						{
+							chunk->SetBlock(BlockType::AIR, glm::vec3(x, y, z));
+						}
+					}
+				}
 				WorldGen::GenerateChunk(chunk, m_WorldSeed);
 				chunk->pChunkState = ChunkState::Generated;
 				//chunk->pMeshState = ChunkMeshState::NeedsBuilding;
@@ -115,6 +130,21 @@ void World::InitWorld()
 			}
 		}
 	}
+
+	for (int i = player_chunk_x - render_distance; i < player_chunk_x + render_distance; i++)
+	{
+		for (int j = player_chunk_z - render_distance; j < player_chunk_z + render_distance; j++)
+		{
+			if (ChunkExistsInMap(i, j))
+			{
+				std::shared_ptr<Chunk> chunk = RetrieveChunkFromMap(i, j);
+				chunk->ConstructNoBind(chunk, GetChunkDataForMeshing(i, j + 1), GetChunkDataForMeshing(i, j - 1), GetChunkDataForMeshing(i + 1, j), GetChunkDataForMeshing(i - 1, j));
+			}
+		}
+	}
+
+	auto end = std::chrono::system_clock::now();
+	std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " - Time it took for init world to complete in milliseconds" << std::endl;
 }
 
 void World::Update()

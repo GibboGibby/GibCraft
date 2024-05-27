@@ -46,7 +46,7 @@ std::shared_ptr<Chunk> MeshThread::RetrieveChunkFromMap(std::shared_ptr<std::map
 
 	if (chunk == worldChunks->end())
 	{
-		std::cout << "Failed to find chunk in world data - mesh thread version" << std::endl;
+		//std::cout << "Failed to find chunk in world data - mesh thread version" << std::endl;
 		return nullptr;
 	}
 
@@ -58,9 +58,12 @@ ChunkDataSharedPtr MeshThread::GetChunkDataForMeshing(std::shared_ptr<std::map<s
 {
 	if (ChunkExistsInMap(worldChunks, cx, cz))
 	{
+		std::shared_ptr<Chunk> chunk = RetrieveChunkFromMap(worldChunks, cx, cz);
+		if (chunk->pChunkState == ChunkState::Generated)
+			return RetrieveChunkFromMap(worldChunks, cx, cz)->pChunkContentsPtr;
+		
 		//std::lock_guard<std::mutex> lock(RetrieveChunkFromMap(worldChunks, cx, cz)->chunkMutex);
 		//return std::make_shared<std::array<std::array<std::array<Block, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>>(RetrieveChunkFromMap(worldChunks, cx, cz)->pChunkContentsPtr);
-		return RetrieveChunkFromMap(worldChunks, cx, cz)->pChunkContentsPtr;
 	}
 
 	return nullptr;
@@ -119,7 +122,7 @@ void MeshThread::ThreadFunc(std::shared_ptr<std::map<std::pair<int, int>, std::s
 				World::worldMutex.unlock();
 			}
 		}
-		std::cout << "Full Mesh Thread Run Complete" << std::endl;
+		//std::cout << "Full Mesh Thread Run Complete" << std::endl;
 		std::this_thread::sleep_for(16ms);
 	}
 }
