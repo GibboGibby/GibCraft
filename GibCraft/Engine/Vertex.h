@@ -35,4 +35,7 @@ struct Vertex
 {
 	i8vec3 position;
 	i16vec2 texture_coords;
+	uint8_t lighting_level;
+	uint8_t block_face_lighting;
+	float ambientOcclusion;
 };

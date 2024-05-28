@@ -71,8 +71,10 @@ TesselatedPlane::TesselatedPlane(int startSize, int pointsPerMetre)
 			
 
 			/*
-			std::cout << "tri 1 - " << std::endl;
-			std::cout << "    v1 - " << v1.position << std::endl;
+			
+			<< "tri 1 - " << std::endl;
+			
+			<< "    v1 - " << v1.position << std::endl;
 			std::cout << "    v2 - " << v2.position << std::endl;
 			std::cout << "    v3 - " << v3.position << std::endl;
 			std::cout << "tri 2 - " << std::endl;

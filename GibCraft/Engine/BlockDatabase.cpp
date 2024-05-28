@@ -10,6 +10,7 @@ namespace BlockDatabase
 		GrassSide,
 		Stone,
 		Cobblestone,
+		Glass,
 
 		UnknownBlockType
 	};
@@ -48,6 +49,8 @@ namespace BlockDatabase
 			else if (face == BlockFace::BOTTOM)
 				retVal = BlockTypeTexture::Dirt;
 			break;
+		case GLASS:
+			retVal = BlockTypeTexture::Glass;
 		case UNKNOWN:
 			retVal = BlockTypeTexture::UnknownBlockType;
 			break;
@@ -64,7 +67,7 @@ namespace BlockDatabase
 		{
 			TextureAtlas BlockTextureAtlas("resources\\textures\\atlas.png", 16, 16);
 			first_run = false;
-			constexpr int list_sz = 8;
+			constexpr int list_sz = 9;
 			BlockTypeTexture texture_list[list_sz] =
 			{
 				BlockTypeTexture::Dirt,
@@ -74,6 +77,7 @@ namespace BlockDatabase
 				BlockTypeTexture::GrassFront,
 				BlockTypeTexture::Stone,
 				BlockTypeTexture::Cobblestone,
+				BlockTypeTexture::Glass,
 				BlockTypeTexture::UnknownBlockType
 			};
 
@@ -113,6 +117,7 @@ namespace BlockDatabase
 			BlockNameDatabase[BlockType::AIR] = "Air";
 			BlockNameDatabase[BlockType::OAK_PLANKS] = "Oak Planks";
 			BlockNameDatabase[BlockType::UNKNOWN] = "UNKNOWN BLOCK";
+			BlockNameDatabase[BlockType::GLASS] = "Glass";
 		}
 
 		std::unordered_map<BlockType, std::string>::iterator iter = BlockNameDatabase.find(type);

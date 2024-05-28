@@ -15,9 +15,11 @@
 #include "Chunk.h"
 
 #include "Random.h"
+
 namespace WorldGen
 {
 	Block* GetWorldBlock(const glm::vec3& blockPos);
 
-	void GenerateChunk(Chunk* chunk, const int WorldSeed);
+	void GenerateChunk(std::shared_ptr<Chunk> chunk, const int WorldSeed);
+
 }

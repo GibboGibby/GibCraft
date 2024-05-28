@@ -145,9 +145,12 @@
     <ClCompile Include="Engine\EBO.cpp" />
     <ClCompile Include="Engine\FastNoise.cpp" />
     <ClCompile Include="Engine\FPSCamera.cpp" />
+    <ClCompile Include="Engine\Frustum.cpp" />
+    <ClCompile Include="Engine\GenThread.cpp" />
     <ClCompile Include="Engine\glad.c" />
     <ClCompile Include="Engine\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Input\Input.cpp" />
+    <ClCompile Include="Engine\MeshThread.cpp" />
     <ClCompile Include="Engine\Raycast.cpp" />
     <ClCompile Include="Engine\Renderer.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
@@ -174,9 +177,12 @@
     <ClInclude Include="Engine\EBO.h" />
     <ClInclude Include="Engine\FastNoise.h" />
     <ClInclude Include="Engine\FPSCamera.h" />
+    <ClInclude Include="Engine\Frustum.h" />
+    <ClInclude Include="Engine\GenThread.h" />
     <ClInclude Include="Engine\GibMaths.h" />
     <ClInclude Include="Engine\IndexBuffer.h" />
     <ClInclude Include="Engine\Input\Input.h" />
+    <ClInclude Include="Engine\MeshThread.h" />
     <ClInclude Include="Engine\Random.h" />
     <ClInclude Include="Engine\Raycast.h" />
     <ClInclude Include="Engine\Renderer.h" />
@@ -196,11 +202,13 @@
   <ItemGroup>
     <None Include="shaders\fragment\basic.frag" />
     <None Include="shaders\fragment\BlockRenderer.frag" />
+    <None Include="shaders\fragment\OldBlockRenderer.frag" />
     <None Include="Shaders\Vertex\basic.vert" />
     <None Include="Shaders\Fragment\default.frag" />
     <None Include="shaders\vertex\BlockRenderer.vert" />
     <None Include="Shaders\Vertex\default.vert" />
     <None Include="Shaders\Vertex\fmb.vert" />
+    <None Include="shaders\vertex\OldBlockRenderer.vert" />
     <None Include="Shaders\Vertex\sinewave.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

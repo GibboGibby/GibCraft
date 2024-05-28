@@ -2,10 +2,13 @@
 
 static FastNoise BiomeGenerator(8213);
 
-void SetVerticalBlocks(Chunk* chunk, int x, int z, int y_level, float real_x, float real_z)
+
+void SetVerticalBlocks(std::shared_ptr<Chunk> chunk, int x, int z, int y_level, float real_x, float real_z)
 {
     BiomeGenerator.SetNoiseType(FastNoise::Simplex);
-    //std::cout << "y level for chunk is - " << y_level << std::endl;
+    //
+    // 
+    //  << "y level for chunk is - " << y_level << std::endl;
 
     for (int i = 0; i < y_level; i++)
     {
@@ -16,6 +19,7 @@ void SetVerticalBlocks(Chunk* chunk, int x, int z, int y_level, float real_x, fl
                 if (i >= y_level - 1)
                 {
                     chunk->SetBlock(BlockType::GRASS, glm::vec3(x, i, z));
+                    //chunk->pChunkContentsPtr->at(x).at(i).at(z).type = BlockType::GRASS;
                 }
 
                 else if (i >= y_level - 5)
@@ -52,14 +56,14 @@ void SetVerticalBlocks(Chunk* chunk, int x, int z, int y_level, float real_x, fl
     return;
 }
 
-void AddWaterBlocks(Chunk* chunk, const int water_min, const int water_max)
+void AddWaterBlocks(std::shared_ptr<Chunk> chunk, const int water_min, const int water_max)
 {
     /*
     Generates water in the areas needed inside of the chunk
     */
 
     Random water_gen(chunk->pPosition.x + chunk->pPosition.y);
-    ChunkDataTypePtr chunk_data = &chunk->pChunkContents;
+    ChunkDataSharedPtr chunk_data = chunk->pChunkContentsPtr;
 
     for (int x = 0; x < CHUNK_SIZE_X; x++)
     {
@@ -139,7 +143,8 @@ void AddWaterBlocks(Chunk* chunk, const int water_min, const int water_max)
     }
 }
 
-void WorldGen::GenerateChunk(Chunk* chunk, const int WorldSeed)
+
+void WorldGen::GenerateChunk(std::shared_ptr<Chunk> chunk, const int WorldSeed)
 {
     int water_min = 2;
     int water_max = 72;

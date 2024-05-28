@@ -1,6 +1,6 @@
 #pragma once
 
-enum BlockType
+enum BlockType : char
 {
 	AIR,
 	OAK_PLANKS,
@@ -8,10 +8,11 @@ enum BlockType
 	GRASS,
 	STONE,
 	COBBLESTONE,
+	GLASS,
 	UNKNOWN
 };
 
-enum BlockFace
+enum BlockFace : char
 {
 	TOP,
 	LEFT,
@@ -23,6 +24,8 @@ enum BlockFace
 
 struct Block
 {
+
+	Block() = default;
 	BlockType type = BlockType::UNKNOWN;
 
 	bool IsModel() const
@@ -65,8 +68,8 @@ struct Block
 		{
 			return true;
 		}
-
 		*/
+		if (type != BlockType::AIR && type != BlockType::GLASS && !IsModel()) return true;
 		return false;
 	}
 
@@ -80,7 +83,7 @@ struct Block
 			return true;
 		}
 		*/
-		if (type != BlockType::AIR)
+		if (type != BlockType::AIR && type != BlockType::GLASS)
 			return true;
 
 		return false;
@@ -96,7 +99,7 @@ struct Block
 			return true;
 		}
 		*/
-		if (type == BlockType::AIR)
+		if (type == BlockType::AIR || type == BlockType::GLASS)
 			return true;
 		return false;
 	}
@@ -110,7 +113,7 @@ struct Block
 		}
 		*/
 
-		if (type == BlockType::AIR)
+		if (type == BlockType::AIR || type == BlockType::GLASS)
 			return true;
 		return false;
 	}

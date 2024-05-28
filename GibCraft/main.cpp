@@ -12,6 +12,9 @@
 #include <glm/ext.hpp>
 #include "Engine/Cube.h"
 #include "Engine/TesselatedPlane.h"
+#include "Engine/MeshThread.h"
+#include "Engine/GenThread.h"
+#include<iomanip>
 
 //#include "Engine/CubeRenderer.h"
 #include "Engine/Renderer.h"
@@ -183,7 +186,7 @@ int main()
 	glm::mat4 viewMatrix = glm::lookAt(oldcamera.pos, center, up);
 
 	
-
+	float maxFPS = 1.0f / 144.0f;
 	
 	Shader shaderProgram("shaders/vertex/default.vert", "shaders/fragment/default.frag");
 	Shader newShaderProgram("shaders/vertex/basic.vert", "shaders/fragment/basic.frag");
@@ -237,10 +240,14 @@ int main()
 	int atlasWidth;
 	int atlasHeight;
 	int atlasNumChannels;
+	int crosshairWidth;
+	int crosshairHeight;
+	int crosshairChannels;
 
 	uint8_t* pixels = stbi_load("resources\\textures\\oak_planks.png", &texWidth, &texHeight, &numChannels, 0);
 	uint8_t* dirtPixels = stbi_load("resources\\textures\\dirt.png", &texWidth, &texHeight, &numChannels, 0);
 	uint8_t* textureAtlasPixels = stbi_load("resources\\textures\\atlas.png", &atlasWidth, &atlasHeight, &atlasNumChannels, 0);
+	uint8_t* crosshairPixels = stbi_load("resources\\textures\\crosshair.png", &crosshairWidth, &crosshairHeight, &crosshairChannels, 0);
 
 	uint32_t woodenPlanksID;
 	glGenTextures(1, &woodenPlanksID);
@@ -287,10 +294,23 @@ int main()
 
 	glTexImage2D(GL_TEXTURE_2D, mipLevel, internalFormat, atlasWidth, atlasHeight, border, format, type, textureAtlasPixels);
 
+
+	/*
+	uint32_t crosshairID;
+	glGenTextures(1, &crosshairID);
+	glBindTexture(GL_TEXTURE_2D, crosshairID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, mipLevel, internalFormat, crosshairWidth, crosshairHeight, border, format, type, crosshairPixels);
 	
+	*/
 	stbi_image_free(pixels);
 	stbi_image_free(dirtPixels);
 	stbi_image_free(textureAtlasPixels);
+	//stbi_image_free(crosshairPixels);
 
 	/*
 	int textureSlot = 0;
@@ -306,6 +326,13 @@ int main()
 	glActiveTexture(GL_TEXTURE0 + textureSlot);
 	glBindTexture(GL_TEXTURE_2D, texAtlasID);
 
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, crosshairID);
+
+	//glActiveTexture(GL_TEXTURE0 + textureSlot);
+
+	
+
 	shaderProgram.UploadInt("uTexture", textureSlot);
 
 	float fov = 45.f;
@@ -314,21 +341,39 @@ int main()
 	float windowAspect = ((float)window.Width() / (float)window.Height());
 
 	Renderer* renderer = new Renderer();
-	FPSCamera* camera = new FPSCamera(fov, windowAspect, near, far, 0.25f);
+	std::shared_ptr<FPSCamera> camera = std::make_shared<FPSCamera>(fov, windowAspect, near, far, 0.25f);
 
 	inputMan->ResetMousePositionDelta(window.GetWindow());
 	
 	World world(1254125, glm::vec2(0,0), "Gaming");
 	world.UpdatePlayerPosition(camera->GetPosition());
-	world.Update();
+
+	camera->SetPosition(glm::vec3(0.0f, 120.0f, 0.0f));
+	std::cout << "size of block in bytes - " << sizeof(Block) << std::endl;
+	std::cout << "size of blocktype in bytes - " << sizeof(BlockType) << std::endl;
+
+
+	world.InitWorld();
 	//world.CreateWorldGenThread(camera);
+	GenThread* genThread = new GenThread(world.m_WorldChunks, camera, 1254125, 10, 14);
+	MeshThread* meshThread = new MeshThread(world.m_WorldChunks, camera, 1254125, 10, 14);
+
 	glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//world.Init();
 	
+	std::chrono::high_resolution_clock::time_point lastFrameStart = std::chrono::high_resolution_clock::now();
+	std::chrono::high_resolution_clock::time_point lastFrameFinish = std::chrono::high_resolution_clock::now();
 	
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
-
+		std::chrono::high_resolution_clock::time_point frameStartTime = std::chrono::high_resolution_clock::now();
+		//int milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(frameStartTime - lastFrameFinish).count();
+		//std::cout << "milliseconds number - " << milliseconds << std::endl;
+		//float deltaTime = (float)milliseconds / 1000.0f;
+		float deltaTime = std::chrono::duration<float>(frameStartTime - lastFrameStart).count();
+		//int mil = std::chrono::duration_cast<std::chrono::milliseconds>(frameStartTime - lastFrameFinish).count();
+		//std::cout << "milliseconds difference - " << mil << std::endl;
+		std::cout << "deltaTime - " << deltaTime << std::fixed << std::setprecision(3) << std::endl;
 		if (Input::GetKeyDown(GLFW_KEY_F1))
 		{
 			fullscreen = !fullscreen;
@@ -340,40 +385,41 @@ int main()
 			window.Close();
 			return -1;
 		}
-		float moveSpeed = 1.0f;
+		float moveSpeed = 4.0f;
 		if (Input::GetKey(GLFW_KEY_A))
 		{
 			//camera->SetPosition(camera->GetPosition() + (camera->GetFront() * (glm::vec3(-1.0f, 0.0f, 0.0f) * -moveSpeed)));
-			camera->SetPosition(camera->GetPosition() + (camera->GetRight() * -moveSpeed));
+			camera->SetPosition(camera->GetPosition() + (camera->GetRight() * -moveSpeed * deltaTime));
 		}
 
 		if (Input::GetKey(GLFW_KEY_D))
 		{
-			camera->SetPosition(camera->GetPosition() + (camera->GetRight() * moveSpeed));
+			camera->SetPosition(camera->GetPosition() + (camera->GetRight() * moveSpeed * deltaTime));
 		}
 
 		if (Input::GetKey(GLFW_KEY_W))
 		{
-			camera->SetPosition(camera->GetPosition() + (camera->GetFront() * moveSpeed));
+			camera->SetPosition(camera->GetPosition() + (camera->GetFront() * moveSpeed * deltaTime));
 		}
 		if (Input::GetKey(GLFW_KEY_S))
 		{
-			camera->SetPosition(camera->GetPosition() + (camera->GetFront() * -moveSpeed));
+			camera->SetPosition(camera->GetPosition() + (camera->GetFront() * -moveSpeed * deltaTime));
 		}
 
 		if (Input::GetKey(GLFW_KEY_Q))
 		{
-			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed * 0.3f));
+			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed * deltaTime));
 		}
 		if (Input::GetKey(GLFW_KEY_E))
 		{
-			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed *0.3f));
+			camera->SetPosition(camera->GetPosition() + (glm::vec3(0.0f, -1.0f, 0.0f) * moveSpeed * deltaTime));
 		}
 
 
 		//shaderProgram.Activate();
 		glm::vec2 mousePosDelta = Input::MousePositionDelta();
-		//std::cout << "This is the mouse delta: x - " << mousePosDelta.x << "   y - " << mousePosDelta.y << std::endl;
+		//
+		//  << "This is the mouse delta: x - " << mousePosDelta.x << "   y - " << mousePosDelta.y << std::endl;
 		camera->UpdateOnMouseMovement(Input::mousePosition.x, Input::mousePosition.y);
 
 
@@ -398,9 +444,17 @@ int main()
 			chunk->Construct(chunkForward, chunkBack, chunkLeft, chunkRight);
 		*/
 
+		if (Input::GetKeyDown(GLFW_KEY_1)) camera->blockInHand = BlockType::DIRT;
+		if (Input::GetKeyDown(GLFW_KEY_2)) camera->blockInHand = BlockType::GRASS;
+		if (Input::GetKeyDown(GLFW_KEY_3)) camera->blockInHand = BlockType::STONE;
+		if (Input::GetKeyDown(GLFW_KEY_4)) camera->blockInHand = BlockType::COBBLESTONE;
+		if (Input::GetKeyDown(GLFW_KEY_5)) camera->blockInHand = BlockType::OAK_PLANKS;
+		if (Input::GetKeyDown(GLFW_KEY_6)) camera->blockInHand = BlockType::GLASS;
+
+
 		if (Input::GetKeyDown(GLFW_KEY_P))
 		{
-			Chunk* thing = world.RetrieveChunkFromMap(0,0);
+			std::shared_ptr<Chunk> thing = world.RetrieveChunkFromMap(0,0);
 			for (int x = 0; x < CHUNK_SIZE_X; x++)
 			{ 
 				for (int y = 0; y < CHUNK_SIZE_Y; y++)
@@ -414,6 +468,7 @@ int main()
 			}
 		}
 		camera->Refresh();
+		
 		world.UpdatePlayerPosition(camera->GetPosition());
 		if (Input::GetMouseButtonDown(GLFW_MOUSE_BUTTON_1))
 		{
@@ -426,8 +481,9 @@ int main()
 		}
 
 		
-		
-		world.Update();
+		world.UpdateAddToChunks();
+		//world.Update();
+		world.UpdateViewFrustum(camera);
 		world.RenderWorld(camera);
 
 		world.UpdateFramePause();
@@ -448,6 +504,17 @@ int main()
 		inputMan->UpdatePrevInput();
 		inputMan->UpdateMouse(window.GetWindow());
 		glfwPollEvents();
+		lastFrameFinish = std::chrono::high_resolution_clock::now();
+		lastFrameStart = frameStartTime;
+		auto fpsMax = std::chrono::duration<float>(maxFPS);
+		auto miliseconds = std::chrono::duration<float>(lastFrameFinish - frameStartTime);
+		//std::cout << "END OF FRAME\nMiliseconds count - " << miliseconds.count() << "\nfpsMax - " << maxFPS << std::endl;
+		//float miliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(lastFrameFinish - frameStartTime).count() / 1000.0f;
+		if (miliseconds.count() < maxFPS)
+		{
+			std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::milliseconds>(fpsMax - miliseconds));
+			//std::this_thread::sleep_for(std::chrono::milliseconds(200));
+		}
 	}
 
 	VAO1.Delete();
@@ -455,8 +522,9 @@ int main()
 	//EBO1.Delete();
 	shaderProgram.Delete();
 
-
+	
 	Input::Release();
 	glfwDestroyWindow(window.GetWindow());
 	glfwTerminate();
+
 }
