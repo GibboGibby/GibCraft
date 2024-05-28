@@ -58,6 +58,7 @@ public:
 	std::array<std::array<uint8_t, CHUNK_SIZE_X>, CHUNK_SIZE_Z> p_HeightMap;
 	std::array<std::array<std::array<Block, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z> pChunkContents;
 	std::shared_ptr<std::array<std::array<std::array<Block, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>> pChunkContentsPtr;
+	std::shared_ptr<std::array<std::array<std::array<uint8_t, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>> pChunkLightInformation;
 
 	FrustumAABB p_ChunkFrustummAABB;
 

@@ -244,5 +244,7 @@
     <None Include="shaders\fragment\basic.frag">
       <Filter>Resource Files\fragment</Filter>
     </None>
+    <None Include="shaders\fragment\OldBlockRenderer.frag" />
+    <None Include="shaders\vertex\OldBlockRenderer.vert" />
   </ItemGroup>
 </Project>

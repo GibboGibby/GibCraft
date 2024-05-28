@@ -13,6 +13,7 @@ public:
 	Renderer();
 
 	void StartChunkRendering(std::shared_ptr<FPSCamera> camera, int render_distacne);
+	void RenderTransparentChunk(std::shared_ptr<Chunk> chunk);
 	void RenderChunk(std::shared_ptr<Chunk> chunk);
 	void EndChunkRendering();
 

@@ -8,6 +8,7 @@ enum BlockType : char
 	GRASS,
 	STONE,
 	COBBLESTONE,
+	GLASS,
 	UNKNOWN
 };
 
@@ -67,8 +68,8 @@ struct Block
 		{
 			return true;
 		}
-
 		*/
+		if (type != BlockType::AIR && type != BlockType::GLASS && !IsModel()) return true;
 		return false;
 	}
 
@@ -82,7 +83,7 @@ struct Block
 			return true;
 		}
 		*/
-		if (type != BlockType::AIR)
+		if (type != BlockType::AIR && type != BlockType::GLASS)
 			return true;
 
 		return false;
@@ -98,7 +99,7 @@ struct Block
 			return true;
 		}
 		*/
-		if (type == BlockType::AIR)
+		if (type == BlockType::AIR || type == BlockType::GLASS)
 			return true;
 		return false;
 	}
@@ -112,7 +113,7 @@ struct Block
 		}
 		*/
 
-		if (type == BlockType::AIR)
+		if (type == BlockType::AIR || type == BlockType::GLASS)
 			return true;
 		return false;
 	}

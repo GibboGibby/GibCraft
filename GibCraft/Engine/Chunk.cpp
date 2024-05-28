@@ -7,6 +7,7 @@ Chunk::Chunk(const glm::vec3 chunkPos) : pPosition(chunkPos), pMeshState(ChunkMe
 	//std::fill_n(&pChunkContents[0][0][0], CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z, BlockType::AIR);
 	//auto start = std::chrono::system_clock::now();
 	pChunkContentsPtr = std::make_shared<std::array<std::array<std::array<Block, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>>();
+	pChunkLightInformation = std::make_shared<std::array<std::array<std::array<uint8_t, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>>();
 	//std::fill(pChunkContentsPtr->begin(), pChunkContentsPtr->end(), BlockType::AIR);
 	mChunkMesh = std::make_shared<ChunkMesh>();
 	/*
@@ -22,8 +23,10 @@ Chunk::Chunk(const glm::vec3 chunkPos) : pPosition(chunkPos), pMeshState(ChunkMe
 	}
 	*/
 	memset(&p_HeightMap, 0, CHUNK_SIZE_X * CHUNK_SIZE_Z * sizeof(std::uint8_t));
+	memset(pChunkLightInformation.get(), 15, (CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z * sizeof(std::uint8_t)));
 	//pChunkState == ChunkState::Ungenerated;
-	//auto end = std::chrono::system_clock::now();
+	//auto end = std::chrono::
+	// ::now();
 	//std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " - Time it took for a single chunk to be initialised" << std::endl;
 }
 

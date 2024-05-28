@@ -202,11 +202,13 @@
   <ItemGroup>
     <None Include="shaders\fragment\basic.frag" />
     <None Include="shaders\fragment\BlockRenderer.frag" />
+    <None Include="shaders\fragment\OldBlockRenderer.frag" />
     <None Include="Shaders\Vertex\basic.vert" />
     <None Include="Shaders\Fragment\default.frag" />
     <None Include="shaders\vertex\BlockRenderer.vert" />
     <None Include="Shaders\Vertex\default.vert" />
     <None Include="Shaders\Vertex\fmb.vert" />
+    <None Include="shaders\vertex\OldBlockRenderer.vert" />
     <None Include="Shaders\Vertex\sinewave.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

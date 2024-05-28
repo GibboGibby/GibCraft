@@ -240,10 +240,14 @@ int main()
 	int atlasWidth;
 	int atlasHeight;
 	int atlasNumChannels;
+	int crosshairWidth;
+	int crosshairHeight;
+	int crosshairChannels;
 
 	uint8_t* pixels = stbi_load("resources\\textures\\oak_planks.png", &texWidth, &texHeight, &numChannels, 0);
 	uint8_t* dirtPixels = stbi_load("resources\\textures\\dirt.png", &texWidth, &texHeight, &numChannels, 0);
 	uint8_t* textureAtlasPixels = stbi_load("resources\\textures\\atlas.png", &atlasWidth, &atlasHeight, &atlasNumChannels, 0);
+	uint8_t* crosshairPixels = stbi_load("resources\\textures\\crosshair.png", &crosshairWidth, &crosshairHeight, &crosshairChannels, 0);
 
 	uint32_t woodenPlanksID;
 	glGenTextures(1, &woodenPlanksID);
@@ -290,10 +294,23 @@ int main()
 
 	glTexImage2D(GL_TEXTURE_2D, mipLevel, internalFormat, atlasWidth, atlasHeight, border, format, type, textureAtlasPixels);
 
+
+	/*
+	uint32_t crosshairID;
+	glGenTextures(1, &crosshairID);
+	glBindTexture(GL_TEXTURE_2D, crosshairID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, pixelated ? GL_NEAREST : GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, mipLevel, internalFormat, crosshairWidth, crosshairHeight, border, format, type, crosshairPixels);
 	
+	*/
 	stbi_image_free(pixels);
 	stbi_image_free(dirtPixels);
 	stbi_image_free(textureAtlasPixels);
+	//stbi_image_free(crosshairPixels);
 
 	/*
 	int textureSlot = 0;
@@ -308,6 +325,13 @@ int main()
 	int textureSlot = 0;
 	glActiveTexture(GL_TEXTURE0 + textureSlot);
 	glBindTexture(GL_TEXTURE_2D, texAtlasID);
+
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_2D, crosshairID);
+
+	//glActiveTexture(GL_TEXTURE0 + textureSlot);
+
+	
 
 	shaderProgram.UploadInt("uTexture", textureSlot);
 
@@ -337,6 +361,7 @@ int main()
 	glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//world.Init();
 	
+	std::chrono::high_resolution_clock::time_point lastFrameStart = std::chrono::high_resolution_clock::now();
 	std::chrono::high_resolution_clock::time_point lastFrameFinish = std::chrono::high_resolution_clock::now();
 	
 	while (!glfwWindowShouldClose(window.GetWindow()))
@@ -345,8 +370,10 @@ int main()
 		//int milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(frameStartTime - lastFrameFinish).count();
 		//std::cout << "milliseconds number - " << milliseconds << std::endl;
 		//float deltaTime = (float)milliseconds / 1000.0f;
-		float deltaTime = std::chrono::duration<float>(frameStartTime - lastFrameFinish).count();
-		std::cout << "deltaTime - " << deltaTime << std::endl;
+		float deltaTime = std::chrono::duration<float>(frameStartTime - lastFrameStart).count();
+		//int mil = std::chrono::duration_cast<std::chrono::milliseconds>(frameStartTime - lastFrameFinish).count();
+		//std::cout << "milliseconds difference - " << mil << std::endl;
+		std::cout << "deltaTime - " << deltaTime << std::fixed << std::setprecision(3) << std::endl;
 		if (Input::GetKeyDown(GLFW_KEY_F1))
 		{
 			fullscreen = !fullscreen;
@@ -417,6 +444,13 @@ int main()
 			chunk->Construct(chunkForward, chunkBack, chunkLeft, chunkRight);
 		*/
 
+		if (Input::GetKeyDown(GLFW_KEY_1)) camera->blockInHand = BlockType::DIRT;
+		if (Input::GetKeyDown(GLFW_KEY_2)) camera->blockInHand = BlockType::GRASS;
+		if (Input::GetKeyDown(GLFW_KEY_3)) camera->blockInHand = BlockType::STONE;
+		if (Input::GetKeyDown(GLFW_KEY_4)) camera->blockInHand = BlockType::COBBLESTONE;
+		if (Input::GetKeyDown(GLFW_KEY_5)) camera->blockInHand = BlockType::OAK_PLANKS;
+		if (Input::GetKeyDown(GLFW_KEY_6)) camera->blockInHand = BlockType::GLASS;
+
 
 		if (Input::GetKeyDown(GLFW_KEY_P))
 		{
@@ -471,12 +505,15 @@ int main()
 		inputMan->UpdateMouse(window.GetWindow());
 		glfwPollEvents();
 		lastFrameFinish = std::chrono::high_resolution_clock::now();
+		lastFrameStart = frameStartTime;
 		auto fpsMax = std::chrono::duration<float>(maxFPS);
 		auto miliseconds = std::chrono::duration<float>(lastFrameFinish - frameStartTime);
+		//std::cout << "END OF FRAME\nMiliseconds count - " << miliseconds.count() << "\nfpsMax - " << maxFPS << std::endl;
 		//float miliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(lastFrameFinish - frameStartTime).count() / 1000.0f;
 		if (miliseconds.count() < maxFPS)
 		{
 			std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::milliseconds>(fpsMax - miliseconds));
+			//std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		}
 	}
 

@@ -296,7 +296,7 @@ void World::Raycast(bool place, std::shared_ptr<FPSCamera> camera)
 
 					if (place && !TestRayPlayerCollision(position, camera->GetPosition()))
 					{
-						edit_block.first->type = BlockType::DIRT;
+						edit_block.first->type = camera->blockInHand;
 						snd_type = edit_block.first->type;
 					}
 					else
@@ -518,6 +518,21 @@ void World::RenderWorld(std::shared_ptr<FPSCamera> camera)
 
 			if (chunk->pMeshState == ChunkMeshState::Built)
 				renderer.RenderChunk(chunk);
+		}
+	}
+
+	glDisable(GL_CULL_FACE);
+
+	for (int i = player_chunk_x - render_distance; i < player_chunk_x + render_distance; i++)
+	{
+		for (int j = player_chunk_z - render_distance; j < player_chunk_z + render_distance; j++)
+		{
+			std::shared_ptr<Chunk> chunk = RetrieveChunkFromMap(i, j);
+
+			if (chunk->pMeshState == ChunkMeshState::Built)
+			{
+				renderer.RenderTransparentChunk(chunk);
+			}
 		}
 	}
 	renderer.EndChunkRendering();	

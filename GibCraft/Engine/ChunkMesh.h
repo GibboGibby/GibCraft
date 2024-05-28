@@ -14,6 +14,7 @@
 class Chunk;
 typedef std::array<std::array<std::array<Block, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>* ChunkDataTypePtr;
 typedef std::shared_ptr<std::array<std::array<std::array<Block, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>> ChunkDataSharedPtr;
+typedef std::shared_ptr<std::array<std::array<std::array<uint8_t, CHUNK_SIZE_X>, CHUNK_SIZE_Y>, CHUNK_SIZE_Z>> ChunkLightingSharedPtr;
 ChunkDataTypePtr _GetChunkDataForMeshing(int cx, int cz);
 
 class ChunkMesh
@@ -21,6 +22,7 @@ class ChunkMesh
 private:
 	//std::array<Block, 3> mChunkData = {BlockType::DIRT, BlockType::OAK_PLANKS, BlockType::GRASS};
 	std::vector<Vertex> mVertices;
+	std::vector<Vertex> mVerticesTransparent;
 
 public:
 	ChunkMesh();
@@ -34,9 +36,11 @@ public:
 
 	//void AddCube();
 
-	void AddFace(std::shared_ptr<Chunk> chunk, BlockFace face, const glm::vec3& position, BlockType type, bool buffer = true);
+	void AddFace(std::shared_ptr<Chunk> chunk, BlockFace face, const glm::vec3& position, BlockType type, uint8_t light_level = 0, bool buffer = true);
 	VertexArray pVAO;
+	VertexArray pTransparentVAO;
 	std::uint32_t p_VerticesCount;
+	std::uint32_t p_TransparentVerticesCount;
 
 private:
 	glm::vec4 m_TopFace[4];
@@ -47,5 +51,6 @@ private:
 	glm::vec4 m_RightFace[4];
 
 	VertexBuffer mVBO;
+	VertexBuffer mTransparentVBO;
 
 };

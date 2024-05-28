@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "Block.h"
 
 class FPSCamera
 {
@@ -18,6 +19,8 @@ public:
 	void SetAspect(float aspect);
 	void SetNearAndFarPlane(float zNear, float zFar);
 	void SetPerspectiveMatrix(float fov, float aspect_ratio, float zNear, float zFar);
+
+	BlockType blockInHand = BlockType::DIRT;
 
 	inline float GetYaw()
 	{
