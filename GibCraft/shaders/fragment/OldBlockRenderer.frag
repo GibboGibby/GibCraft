@@ -25,13 +25,13 @@ void main()
 	}
 
 	
-	if (v_AmbientOcclusion == 0.0f)
+	if (v_AmbientOcclusion <= 0.1f)
 	{
 		o_Color *= vec4(0.9f,0.9f,0.9f,1.0f);
 	}
 	else
 	{
-		float val = 1.0f - (0.5f * v_AmbientOcclusion);
+		float val = 1.0f - (0.575f * v_AmbientOcclusion);
 		if (v_AmbientOcclusion == 1.0f)
 		{
 			//val = 0.25f;
