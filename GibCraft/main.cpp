@@ -199,7 +199,7 @@ int main()
 	VBO1.BufferData(sizeof(newVertexesSquare), newVertexesSquare, GL_STATIC_DRAW);
 	EBO1.BufferData(sizeof(squareIndices), squareIndices, GL_STATIC_DRAW);
 
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(NewVertex), (void*)offsetof(NewVertex,pos));
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(NewVertex), (void*)offsetof(NewVertex, pos));
 	VAO1.LinkAttrib(VBO1, 1, 4, GL_FLOAT, sizeof(NewVertex), (void*)offsetof(NewVertex, color));
 	
 	VAO1.Unbind();
@@ -335,7 +335,7 @@ int main()
 
 	shaderProgram.UploadInt("uTexture", textureSlot);
 
-	float fov = 45.f;
+	float fov = 59.0f;
 	float near = 0.01f;
 	float far = 10000.0f;
 	float windowAspect = ((float)window.Width() / (float)window.Height());
@@ -359,10 +359,15 @@ int main()
 	MeshThread* meshThread = new MeshThread(world.m_WorldChunks, camera, 1254125, 10, 14);
 
 	glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	//int bytes = sizeof(world.RetrieveChunkFromMap(0, 0)->pChunkContentsPtr->data());
+	int bytes = sizeof(Block) * CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z;
+	std::cout << "size of chunk contents ptr data - " << bytes << std::endl;
 	//world.Init();
 	
 	std::chrono::high_resolution_clock::time_point lastFrameStart = std::chrono::high_resolution_clock::now();
 	std::chrono::high_resolution_clock::time_point lastFrameFinish = std::chrono::high_resolution_clock::now();
+	float baseMoveSpeed = 4.0f;
 	
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
@@ -385,7 +390,13 @@ int main()
 			window.Close();
 			return -1;
 		}
-		float moveSpeed = 4.0f;
+		//float moveSpeed = 4.0f;
+		float moveSpeed = baseMoveSpeed;
+		if (Input::GetKey(GLFW_KEY_LEFT_SHIFT))
+		{
+			moveSpeed *= 3.0f;
+		}
+
 		if (Input::GetKey(GLFW_KEY_A))
 		{
 			//camera->SetPosition(camera->GetPosition() + (camera->GetFront() * (glm::vec3(-1.0f, 0.0f, 0.0f) * -moveSpeed)));
@@ -450,6 +461,7 @@ int main()
 		if (Input::GetKeyDown(GLFW_KEY_4)) camera->blockInHand = BlockType::COBBLESTONE;
 		if (Input::GetKeyDown(GLFW_KEY_5)) camera->blockInHand = BlockType::OAK_PLANKS;
 		if (Input::GetKeyDown(GLFW_KEY_6)) camera->blockInHand = BlockType::GLASS;
+		if (Input::GetKeyDown(GLFW_KEY_7)) camera->blockInHand = BlockType::SAND;
 
 
 		if (Input::GetKeyDown(GLFW_KEY_P))

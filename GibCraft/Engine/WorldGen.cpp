@@ -81,7 +81,7 @@ void AddWaterBlocks(std::shared_ptr<Chunk> chunk, const int water_min, const int
                         //float real_x = x + chunk->p_Position.x * CHUNK_SIZE_X;
                         //float real_z = z + chunk->p_Position.z * CHUNK_SIZE_Z;
 
-                        chunk_data->at(x).at(y).at(z).type = BlockType::UNKNOWN;
+                        chunk_data->at(x).at(y).at(z).type = BlockType::SAND;
                         /*
                         if (x > 0 && y < water_max - 1)
                         {
@@ -136,7 +136,7 @@ void AddWaterBlocks(std::shared_ptr<Chunk> chunk, const int water_min, const int
 
                 else if (block->type != BlockType::AIR && y > water_max - 2 && y < water_max + 4)
                 {
-                    chunk_data->at(x).at(y).at(z) = { BlockType::UNKNOWN };
+                    chunk_data->at(x).at(y).at(z) = { BlockType::SAND };
                 }
             }
         }
