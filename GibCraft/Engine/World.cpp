@@ -235,7 +235,7 @@ void World::Raycast(bool place, std::shared_ptr<FPSCamera> camera)
 {
 	glm::vec3 position = camera->GetPosition();
 	const glm::vec3& direction = camera->GetFront();
-	int max = 50; // block reach
+	int max = 4; // block reach
 
 	glm::vec3 sign;
 
