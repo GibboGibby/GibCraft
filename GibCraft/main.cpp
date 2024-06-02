@@ -459,7 +459,7 @@ int main()
 		float moveSpeed = baseMoveSpeed;
 		if (Input::GetKey(GLFW_KEY_LEFT_SHIFT))
 		{
-			moveSpeed *= 3.0f;
+			moveSpeed *= moveSpeedScalar;
 		}
 
 		if (Input::GetKey(GLFW_KEY_A))
@@ -598,7 +598,7 @@ int main()
 		//float miliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(lastFrameFinish - frameStartTime).count() / 1000.0f;
 		if (miliseconds.count() < maxFPS)
 		{
-			std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::milliseconds>(fpsMax - miliseconds));
+			//std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::milliseconds>(fpsMax - miliseconds));
 			//std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		}
 	}
