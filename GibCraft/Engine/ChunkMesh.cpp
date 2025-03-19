@@ -1295,9 +1295,9 @@ void ChunkMesh::AddFace(std::shared_ptr<Chunk> chunk, BlockFace face, const glm:
 			//Chunk to the Back and Up
 			if (chunk->pChunkContentsPtr->at(position.x + 1).at(position.y).at(position.z - 1).IsOpaque()) { v2.ambientOcclusion += 0.5f; v3.ambientOcclusion += 0.5f; }
 			//Chunk to the Right and Up
-			if (chunk->pChunkContentsPtr->at(position.x).at(position.y - 1).at(position.z - 1).IsOpaque()) { v4.ambientOcclusion += 0.5f; v3.ambientOcclusion += 0.5f; }
+			if (chunk->pChunkContentsPtr->at(position.x).at(position.y + 1).at(position.z - 1).IsOpaque()) { v4.ambientOcclusion += 0.5f; v3.ambientOcclusion += 0.5f; }
 			//Chunk to the Left and Up
-			if (chunk->pChunkContentsPtr->at(position.x).at(position.y + 1).at(position.z - 1).IsOpaque()) { v2.ambientOcclusion += 0.5f; v1.ambientOcclusion += 0.5f; }
+			if (chunk->pChunkContentsPtr->at(position.x).at(position.y - 1).at(position.z - 1).IsOpaque()) { v2.ambientOcclusion += 0.5f; v1.ambientOcclusion += 0.5f; }
 		}
 
 		v1.lighting_level = light_level;

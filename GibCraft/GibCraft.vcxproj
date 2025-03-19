@@ -148,6 +148,15 @@
     <ClCompile Include="Engine\Frustum.cpp" />
     <ClCompile Include="Engine\GenThread.cpp" />
     <ClCompile Include="Engine\glad.c" />
+    <ClCompile Include="Engine\ImGUI\imgui.cpp" />
+    <ClCompile Include="Engine\ImGUI\imgui_demo.cpp" />
+    <ClCompile Include="Engine\ImGUI\imgui_draw.cpp" />
+    <ClCompile Include="Engine\ImGUI\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Engine\ImGUI\imgui_impl_opengl2.cpp" />
+    <ClCompile Include="Engine\ImGUI\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Engine\ImGUI\imgui_impl_win32.cpp" />
+    <ClCompile Include="Engine\ImGUI\imgui_tables.cpp" />
+    <ClCompile Include="Engine\ImGUI\imgui_widgets.cpp" />
     <ClCompile Include="Engine\IndexBuffer.cpp" />
     <ClCompile Include="Engine\Input\Input.cpp" />
     <ClCompile Include="Engine\MeshThread.cpp" />
@@ -180,6 +189,32 @@
     <ClInclude Include="Engine\Frustum.h" />
     <ClInclude Include="Engine\GenThread.h" />
     <ClInclude Include="Engine\GibMaths.h" />
+    <ClInclude Include="Engine\ImGUI\imconfig.h" />
+    <ClInclude Include="Engine\ImGUI\imgui.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_allegro5.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_android.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_dx10.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_dx11.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_dx12.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_dx9.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_glfw.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_glut.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_metal.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_opengl2.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_opengl3.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_osx.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_sdl2.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_sdl3.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_sdlrenderer2.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_sdlrenderer3.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_vulkan.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_wgpu.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_impl_win32.h" />
+    <ClInclude Include="Engine\ImGUI\imgui_internal.h" />
+    <ClInclude Include="Engine\ImGUI\imstb_rectpack.h" />
+    <ClInclude Include="Engine\ImGUI\imstb_textedit.h" />
+    <ClInclude Include="Engine\ImGUI\imstb_truetype.h" />
     <ClInclude Include="Engine\IndexBuffer.h" />
     <ClInclude Include="Engine\Input\Input.h" />
     <ClInclude Include="Engine\MeshThread.h" />
@@ -200,6 +235,8 @@
     <ClInclude Include="Engine\WorldGen.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Engine\ImGUI\imgui_impl_metal.mm" />
+    <None Include="Engine\ImGUI\imgui_impl_osx.mm" />
     <None Include="shaders\fragment\basic.frag" />
     <None Include="shaders\fragment\BlockRenderer.frag" />
     <None Include="shaders\fragment\OldBlockRenderer.frag" />

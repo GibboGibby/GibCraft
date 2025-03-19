@@ -14,9 +14,12 @@
 #include "Engine/TesselatedPlane.h"
 #include "Engine/MeshThread.h"
 #include "Engine/GenThread.h"
-#include<iomanip>
+#include <iomanip>
 
-//#include "Engine/CubeRenderer.h"
+#include "Engine/ImGUI/imgui.h"
+#include "Engine/ImGUI/imgui_impl_glfw.h"
+#include "Engine/ImGUI/imgui_impl_opengl3.h"
+
 #include "Engine/Renderer.h"
 #include "Engine/FPSCamera.h"
 
@@ -37,6 +40,8 @@ int main()
 
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	//::ShowWindow(::GetConsoleWindow(), SW_HIDE);
+
 
 	Window window;
 	window.Init(1280, 720, "Gibcraft (Minecraft Clone)");
@@ -55,6 +60,27 @@ int main()
 	glfwSetKeyCallback(window.GetWindow(), inputMan->KeyCallback);
 	glfwSetMouseButtonCallback(window.GetWindow(), inputMan->MouseButtonCallback);
 	glfwSetScrollCallback(window.GetWindow(), inputMan->ScrollCallback);
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsLight();
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplGlfw_InitForOpenGL(window.GetWindow(), true);
+
+	ImGui_ImplOpenGL3_Init("#version 460");
+
+	bool show_demo_window = true;
+	bool show_another_window = false;
+	//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	ImVec4 clear_color = ImVec4(0.29f, 0.70f, 0.95f, 1.00f);
+
 
 	GLfloat vertices[]
 	{
@@ -199,7 +225,7 @@ int main()
 	VBO1.BufferData(sizeof(newVertexesSquare), newVertexesSquare, GL_STATIC_DRAW);
 	EBO1.BufferData(sizeof(squareIndices), squareIndices, GL_STATIC_DRAW);
 
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(NewVertex), (void*)offsetof(NewVertex,pos));
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, sizeof(NewVertex), (void*)offsetof(NewVertex, pos));
 	VAO1.LinkAttrib(VBO1, 1, 4, GL_FLOAT, sizeof(NewVertex), (void*)offsetof(NewVertex, color));
 	
 	VAO1.Unbind();
@@ -335,13 +361,13 @@ int main()
 
 	shaderProgram.UploadInt("uTexture", textureSlot);
 
-	float fov = 45.f;
-	float near = 0.01f;
-	float far = 10000.0f;
+	float fov = 52.5f;
+	float nearPlane = 0.01f;
+	float farPlane = 10000.0f;
 	float windowAspect = ((float)window.Width() / (float)window.Height());
 
 	Renderer* renderer = new Renderer();
-	std::shared_ptr<FPSCamera> camera = std::make_shared<FPSCamera>(fov, windowAspect, near, far, 0.25f);
+	std::shared_ptr<FPSCamera> camera = std::make_shared<FPSCamera>(fov, windowAspect, nearPlane, farPlane, 0.25f);
 
 	inputMan->ResetMousePositionDelta(window.GetWindow());
 	
@@ -359,10 +385,21 @@ int main()
 	MeshThread* meshThread = new MeshThread(world.m_WorldChunks, camera, 1254125, 10, 14);
 
 	glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	bool disable = true;
+
+	//int bytes = sizeof(world.RetrieveChunkFromMap(0, 0)->pChunkContentsPtr->data());
+	int bytes = sizeof(Block) * CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z;
+	std::cout << "size of chunk contents ptr data - " << bytes << std::endl;
 	//world.Init();
 	
 	std::chrono::high_resolution_clock::time_point lastFrameStart = std::chrono::high_resolution_clock::now();
 	std::chrono::high_resolution_clock::time_point lastFrameFinish = std::chrono::high_resolution_clock::now();
+	float baseMoveSpeed = 4.0f;
+	float moveSpeedScalar = 3.0f;
+
+	float sens = camera->GetSensitivity();
+	float f = fov;
+	int counter = 0;
 	
 	while (!glfwWindowShouldClose(window.GetWindow()))
 	{
@@ -374,6 +411,34 @@ int main()
 		//int mil = std::chrono::duration_cast<std::chrono::milliseconds>(frameStartTime - lastFrameFinish).count();
 		//std::cout << "milliseconds difference - " << mil << std::endl;
 		std::cout << "deltaTime - " << deltaTime << std::fixed << std::setprecision(3) << std::endl;
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+
+		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Another Window", &show_another_window);
+
+		ImGui::SliderFloat("fov", &f, 40.0f, 120.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::SliderFloat("sensitivity", &sens, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::SliderFloat("base move speed", &baseMoveSpeed, 1.0f, 10.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		ImGui::SliderFloat("sprint multiplier", &moveSpeedScalar, 2.0f, 10.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+		camera->SetFov(f);
+		camera->SetSensitivity(sens);
+		ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+		if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+			counter++;
+		ImGui::SameLine();
+		ImGui::Text("counter = %d", counter);
+
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+		ImGui::End();
+
 		if (Input::GetKeyDown(GLFW_KEY_F1))
 		{
 			fullscreen = !fullscreen;
@@ -385,7 +450,20 @@ int main()
 			window.Close();
 			return -1;
 		}
-		float moveSpeed = 4.0f;
+
+		if (Input::GetKeyDown(GLFW_KEY_F3))
+		{
+			disable = !disable;
+			if (disable) glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			else glfwSetInputMode(window.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
+		//float moveSpeed = 4.0f;
+		float moveSpeed = baseMoveSpeed;
+		if (Input::GetKey(GLFW_KEY_LEFT_SHIFT))
+		{
+			moveSpeed *= moveSpeedScalar;
+		}
+
 		if (Input::GetKey(GLFW_KEY_A))
 		{
 			//camera->SetPosition(camera->GetPosition() + (camera->GetFront() * (glm::vec3(-1.0f, 0.0f, 0.0f) * -moveSpeed)));
@@ -425,7 +503,8 @@ int main()
 
 		
 		// Set the background colour
-		glClearColor(250.0f / 255.0f, 119.0f / 255.0f, 110.0f / 255.0f, 1.0f);
+		//glClearColor(250.0f / 255.0f, 119.0f / 255.0f, 110.0f / 255.0f, 1.0f);
+		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 		// Clears the screen using the set colour
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		/*
@@ -450,6 +529,7 @@ int main()
 		if (Input::GetKeyDown(GLFW_KEY_4)) camera->blockInHand = BlockType::COBBLESTONE;
 		if (Input::GetKeyDown(GLFW_KEY_5)) camera->blockInHand = BlockType::OAK_PLANKS;
 		if (Input::GetKeyDown(GLFW_KEY_6)) camera->blockInHand = BlockType::GLASS;
+		if (Input::GetKeyDown(GLFW_KEY_7)) camera->blockInHand = BlockType::SAND;
 
 
 		if (Input::GetKeyDown(GLFW_KEY_P))
@@ -495,6 +575,15 @@ int main()
 		renderer->EndChunkRendering();
 		*/
 
+		ImGui::Render();
+		int display_w, display_h;
+		glfwGetFramebufferSize(window.GetWindow(), &display_w, &display_h);
+		glViewport(0, 0, display_w, display_h);
+		//glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+		//glClear(GL_COLOR_BUFFER_BIT);
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
 
 		// Swaps the front and back buffer as we always draw to the back buffer and swap when done
 		glfwSwapBuffers(window.GetWindow());
@@ -512,7 +601,7 @@ int main()
 		//float miliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(lastFrameFinish - frameStartTime).count() / 1000.0f;
 		if (miliseconds.count() < maxFPS)
 		{
-			std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::milliseconds>(fpsMax - miliseconds));
+			//std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::milliseconds>(fpsMax - miliseconds));
 			//std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		}
 	}

@@ -8,6 +8,7 @@ enum BlockType : char
 	GRASS,
 	STONE,
 	COBBLESTONE,
+	SAND,
 	GLASS,
 	UNKNOWN
 };

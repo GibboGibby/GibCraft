@@ -14,6 +14,7 @@ void Window::Init(int width, int height, const char* name)
 	glfwMakeContextCurrent(window);
 	glfwSetWindowUserPointer(window, this);
 	glfwSetWindowSizeCallback(window, Window::CallbackResize);
+	glfwSwapInterval(0);
 
 	monitor = glfwGetPrimaryMonitor();
 	glfwGetWindowSize(window, &wndSize[0], &wndSize[1]);
